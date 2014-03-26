@@ -44,6 +44,10 @@ tasks.startScripts {
     }
 }
 
+artifacts {
+    archives distZip
+}
+
 dependencies {
 
     assets "org.webjars:angularjs:1.2.13"
@@ -74,10 +78,6 @@ dependencies {
     testCompile "org.fluentlenium:fluentlenium-festassert:0.9.2"
     testCompile "org.seleniumhq.selenium:selenium-java:2.37.1"
 
-}
-
-artifacts {
-    archives distZip
 }
 
 

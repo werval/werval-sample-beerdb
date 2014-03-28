@@ -19,7 +19,7 @@ apply plugin: 'java'
 apply plugin: 'qiweb'
 apply plugin: 'application'
 
-defaultTasks "clean", "build", "installApp"
+task stage(dependsOn: ['clean', 'installApp'])
 
 configurations {
     assets

@@ -1,5 +1,6 @@
 buildscript {
     repositories {
+        // maven { url qiwebLocalRepository }
         maven { url "https://repo.codeartisans.org/qiweb"; credentials { username = "qiweb"; password = "qiweb" } }
         mavenCentral()
     }
@@ -9,6 +10,7 @@ buildscript {
     }
 }
 repositories {
+    // maven { url qiwebLocalRepository }
     maven { url "https://repo.codeartisans.org/qiweb"; credentials { username = "qiweb"; password = "qiweb" } }
     mavenCentral()
 }
@@ -16,6 +18,8 @@ repositories {
 apply plugin: 'java'
 apply plugin: 'qiweb'
 apply plugin: 'application'
+
+defaultTasks "clean", "build", "installApp"
 
 configurations {
     assets
@@ -30,6 +34,9 @@ mainClassName = 'org.qiweb.server.bootstrap.Main'
 applicationDistribution.from( "src/main/resources" ) {
     include "*.conf"
     into "etc"
+}
+startScripts {
+    defaultJvmOpts = [ "-server", "-Xmx128m" ]
 }
 tasks.startScripts {
     doLast {

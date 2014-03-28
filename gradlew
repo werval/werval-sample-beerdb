@@ -7,7 +7,7 @@
 ##############################################################################
 
 # Add default JVM options here. You can also use JAVA_OPTS and GRADLE_OPTS to pass JVM options to this script.
-DEFAULT_JVM_OPTS="-Djavax.net.ssl.trustStore=gradle/cacerts"
+DEFAULT_JVM_OPTS="-Djavax.net.ssl.trustStore=gradle/cacerts -Djavax.net.ssl.trustStorePassword=changeit -Dfile.encoding=UTF-8"
 
 APP_NAME="Gradle"
 APP_BASE_NAME=`basename "$0"`

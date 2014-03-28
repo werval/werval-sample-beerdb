@@ -143,4 +143,3 @@ task copyAssets( type: Copy, dependsOn: [ concatJs, optimizeCss, copyFonts ] ) {
 
 processResources.dependsOn copyAssets
 sourceSets.main.resources.srcDir file( "build/generated-src/assets/resources" )
-

@@ -15,6 +15,10 @@ A [JMeter][10] scenario to load-test the JSON api is provided.
 Acceptance tests against the AngularJS front-end are implemented using
 [FluentLenium][11].
 
+![BeerDB UI Tests](beerdb-ui-tests.gif)
+
+The application is deployed live at [qiweb-beerdb.herokuapp.com](http://qiweb-beerdb.herokuapp.com).
+
 [1]: http://www.eclipse.org/eclipselink/
 [2]: http://jcp.org/aboutJava/communityprocess/final/jsr317/
 [3]: http://www.ecma-international.org/publications/standards/Ecma-404.htm

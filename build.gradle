@@ -66,8 +66,6 @@ dependencies {
     compile "org.qiweb:org.qiweb.modules.json:0"
     compile "org.qiweb:org.qiweb.modules.rythm:0"
     compile "org.hibernate:hibernate-validator:5.0.3.Final"
-    compile "com.fasterxml.jackson.core:jackson-databind:2.3.3"
-    compile "com.fasterxml.jackson.core:jackson-annotations:2.3.3"
     compile "org.liquibase:liquibase-core:3.1.1"
     compile "com.ninja-squad:DbSetup:1.2.0"
     compile 'javax.transaction:transaction-api:1.1'

@@ -19,7 +19,6 @@ import beerdb.entities.Beer;
 import beerdb.entities.Brewery;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.io.IOException;
@@ -29,6 +28,7 @@ import javax.persistence.EntityManagerFactory;
 import javax.validation.ConstraintViolationException;
 import org.qiweb.api.outcomes.Outcome;
 import org.qiweb.modules.jpa.JPA;
+import org.qiweb.modules.json.JsonPluginException;
 
 import static org.qiweb.api.context.CurrentContext.application;
 import static org.qiweb.api.context.CurrentContext.outcomes;
@@ -36,6 +36,7 @@ import static org.qiweb.api.context.CurrentContext.request;
 import static org.qiweb.api.context.CurrentContext.reverseRoutes;
 import static org.qiweb.api.http.Headers.Names.LOCATION;
 import static org.qiweb.api.mime.MimeTypesNames.APPLICATION_JSON;
+import static org.qiweb.modules.json.JSON.json;
 
 // TODO SECURITY Filter inputs
 // TODO SECURITY Escape outputs
@@ -43,12 +44,10 @@ import static org.qiweb.api.mime.MimeTypesNames.APPLICATION_JSON;
 public class API
 {
     private final EntityManagerFactory emf;
-    private final ObjectMapper mapper;
 
     public API()
     {
         this.emf = application().plugin( JPA.class ).emf();
-        this.mapper = application().metaData().get( ObjectMapper.class, "mapper" );
     }
 
     public Outcome index()
@@ -72,7 +71,7 @@ public class API
         try
         {
             List<Brewery> breweries = em.createQuery( "select b from Brewery b", Brewery.class ).getResultList();
-            byte[] json = mapper.writerWithView( Json.BreweryListView.class ).writeValueAsBytes( breweries );
+            byte[] json = json().toJSON( breweries, Json.BreweryListView.class );
             return outcomes().ok( json ).as( APPLICATION_JSON ).build();
         }
         finally
@@ -92,9 +91,9 @@ public class API
         Brewery brewery;
         try
         {
-            brewery = mapper.readValue( body, Brewery.class );
+            brewery = json().fromJSON( Brewery.class, body );
         }
-        catch( JsonProcessingException ex )
+        catch( JsonPluginException ex )
         {
             return badRequest( ex.getMessage() );
         }
@@ -106,7 +105,7 @@ public class API
             em.getTransaction().commit();
 
             String breweryRoute = reverseRoutes().get( API.class, c -> c.brewery( brewery.getId() ) ).httpUrl();
-            byte[] json = mapper.writerWithView( Json.BreweryListView.class ).writeValueAsBytes( brewery );
+            byte[] json = json().toJSON( brewery, Json.BreweryListView.class );
             return outcomes().
                 created().
                 withHeader( LOCATION, breweryRoute ).
@@ -135,7 +134,7 @@ public class API
             {
                 return notFound( "Brewery" );
             }
-            byte[] json = mapper.writerWithView( Json.BreweryDetailView.class ).writeValueAsBytes( brewery );
+            byte[] json = json().toJSON( brewery, Json.BreweryDetailView.class );
             return outcomes().ok( json ).as( APPLICATION_JSON ).build();
         }
         finally
@@ -161,7 +160,7 @@ public class API
             {
                 return notFound( "Brewery" );
             }
-            mapper.readerForUpdating( brewery ).readValue( body );
+            json().updateFromJSON( brewery, body );
             em.persist( brewery );
             em.getTransaction().commit();
             return outcomes().ok().build();
@@ -216,7 +215,7 @@ public class API
         try
         {
             List<Beer> beers = em.createQuery( "select b from Beer b", Beer.class ).getResultList();
-            byte[] json = mapper.writerWithView( Json.BeerListView.class ).writeValueAsBytes( beers );
+            byte[] json = json().toJSON( beers, Json.BeerListView.class );
             return outcomes().ok( json ).as( APPLICATION_JSON ).build();
         }
         finally
@@ -233,7 +232,7 @@ public class API
             return badRequest( "Unacceptable content-type:" + request().contentType() );
         }
         byte[] body = request().body().asBytes();
-        JsonNode bodyNode = mapper.readTree( body );
+        JsonNode bodyNode = json().fromJSON( body );
         if( !bodyNode.hasNonNull( "brewery_id" ) )
         {
             return badRequest( "Missing brewery_id" );
@@ -242,9 +241,9 @@ public class API
         Beer beer;
         try
         {
-            beer = mapper.treeToValue( bodyNode, Beer.class );
+            beer = json().fromNode( Beer.class, bodyNode );
         }
-        catch( JsonProcessingException ex )
+        catch( JsonPluginException ex )
         {
             return badRequest( ex.getMessage() );
         }
@@ -262,7 +261,7 @@ public class API
             em.persist( brewery );
             em.getTransaction().commit();
             String beerRoute = reverseRoutes().get( API.class, c -> c.beer( beer.getId() ) ).httpUrl();
-            byte[] json = mapper.writerWithView( Json.BeerListView.class ).writeValueAsBytes( beer );
+            byte[] json = json().toJSON( beer, Json.BeerListView.class );
             return outcomes().
                 created().
                 withHeader( LOCATION, beerRoute ).
@@ -291,7 +290,7 @@ public class API
             {
                 return notFound( "Beer" );
             }
-            byte[] json = mapper.writerWithView( Json.BeerDetailView.class ).writeValueAsBytes( beer );
+            byte[] json = json().toJSON( beer, Json.BeerDetailView.class );
             return outcomes().ok( json ).as( APPLICATION_JSON ).build();
         }
         finally
@@ -317,7 +316,7 @@ public class API
             {
                 return notFound( "Beer" );
             }
-            mapper.readerForUpdating( beer ).readValue( body );
+            json().updateFromJSON( beer, body );
             em.persist( beer );
             em.getTransaction().commit();
             return outcomes().ok().build();
@@ -372,12 +371,12 @@ public class API
     private byte[] errorBody( String... messages )
         throws JsonProcessingException
     {
-        ObjectNode root = mapper.createObjectNode();
+        ObjectNode root = json().newObject();
         ArrayNode errors = root.putArray( "errors" );
         for( String message : messages )
         {
             errors.add( message );
         }
-        return mapper.writeValueAsBytes( root );
+        return json().toJSON( root );
     }
 }

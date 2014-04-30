@@ -17,9 +17,6 @@ package beerdb;
 
 import beerdb.entities.Beer;
 import beerdb.entities.Brewery;
-import com.fasterxml.jackson.databind.MapperFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import java.sql.Connection;
 import java.sql.SQLException;
 import javax.persistence.EntityManager;
@@ -47,8 +44,6 @@ import static org.qiweb.api.util.Strings.EMPTY;
  *
  * Apply database changelog.
  * <p>
- * Setup Jackson.
- * <p>
  * Behaviour depends on Application Mode:
  * <ul>
  * <li>PROD: Insert initial data on start.</li>
@@ -69,9 +64,6 @@ public class Global
 
         // Insert initial data
         insertInitialData( application );
-
-        // Jackson JSON
-        application.metaData().put( "mapper", createObjectMapper() );
 
         LOG.info( "Beer Database Activated" );
     }
@@ -151,14 +143,6 @@ public class Global
             {
             }
         }
-    }
-
-    private ObjectMapper createObjectMapper()
-    {
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.configure( MapperFeature.DEFAULT_VIEW_INCLUSION, false );
-        mapper.setPropertyNamingStrategy( PropertyNamingStrategy.CAMEL_CASE_TO_LOWER_CASE_WITH_UNDERSCORES );
-        return mapper;
     }
 
     private void insertInitialData( Application application )

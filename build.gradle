@@ -25,7 +25,7 @@ configurations {
     assets
 }
 
-qiweb {
+devshell {
     extraWatch += [ "src/main/assets" ]
 }
 

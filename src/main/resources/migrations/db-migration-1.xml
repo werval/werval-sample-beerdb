@@ -36,6 +36,11 @@
             </column>
         </createTable>
 
+        <rollback>
+            <dropTable tableName="beers"/>
+            <dropTable tableName="breweries"/>
+        </rollback>
+
     </changeSet>
 
 </databaseChangeLog>

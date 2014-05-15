@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <!-- Insert some initial data -->
+    <changeSet id="2" author="paul">
+
+        <insert tableName="breweries">
+            <column name="id">1</column>
+            <column name="name">Kronenbourg 1664</column>
+            <column name="url">http://kronenbourg1664.com/</column>
+            <column name="since">1664</column>
+            <column name="description">
+                **Kronenbourg Brewery** (Brasseries Kronenbourg) is a brewery founded in 1664 by Geronimus
+                Hatt in Strasbourg (at the time a Free Imperial City of the Holy Roman Empire; now France)
+                as the Hatt Brewery. The name comes from the area (Cronenbourg) where the brewery relocated
+                in 1850. The company is owned by the Carlsberg Group. The main brand is Kronenbourg 1664, a
+                5.5% abv pale lager which is the best selling premium lager brand in France.
+            </column>
+            <column name="beers_count">3</column>
+        </insert>
+        <insert tableName="beers">
+            <column name="id">1</column>
+            <column name="name">Kronenbourg</column>
+            <column name="abv">5.5</column>
+            <column name="description">Pale lager first brewed in 1952.</column>
+            <column name="brewery_id">1</column>
+        </insert>
+        <insert tableName="beers">
+            <column name="id">2</column>
+            <column name="name">Kronenbourg 1664</column>
+            <column name="abv">5</column>
+            <column name="description"></column>
+            <column name="brewery_id">1</column>
+        </insert>
+        <insert tableName="beers">
+            <column name="id">3</column>
+            <column name="name">Single Malt</column>
+            <column name="abv">6.1</column>
+            <column name="description">French name Malt d'Exception.</column>
+            <column name="brewery_id">1</column>
+        </insert>
+        
+        <insert tableName="breweries">
+            <column name="id">2</column>
+            <column name="name">Duyck</column>
+            <column name="url">http://www.jenlain.fr/</column>
+            <column name="since">1922</column>
+            <column name="description">
+                Since 1922, four generations have successively taken over the brewery, over its eventful
+                history... From Léon to Raymond Duyck, discover the fascinating story of this devoted
+                family!
+            </column>
+            <column name="beers_count">0</column>
+        </insert>
+        <insert tableName="beers">
+            <column name="id">4</column>
+            <column name="name">Jenlain Ténébreuse</column>
+            <column name="abv">7</column>
+            <column name="description">A GENTLE RAY OF LIGHT AMIDST THE GLOOM.</column>
+            <column name="brewery_id">2</column>
+        </insert>
+        <insert tableName="beers">
+            <column name="id">5</column>
+            <column name="name">Jenlain Ambrée</column>
+            <column name="abv">7.5</column>
+            <column name="description">GUARDIAN OF OUR TRADITIONS.</column>
+            <column name="brewery_id">2</column>
+        </insert>
+        <insert tableName="beers">
+            <column name="id">6</column>
+            <column name="name">Jenlain Blonde</column>
+            <column name="abv">7.5</column>
+            <column name="description">THE WORTHY HEIR.</column>
+            <column name="brewery_id">2</column>
+        </insert>
+        <insert tableName="beers">
+            <column name="id">7</column>
+            <column name="name">Jenlain Blonde d'Abbaye</column>
+            <column name="abv">6.8</column>
+            <column name="description">TIME FOR SHARING.</column>
+            <column name="brewery_id">2</column>
+        </insert>
+        <insert tableName="beers">
+            <column name="id">8</column>
+            <column name="name">Jenlain N°6</column>
+            <column name="abv">6</column>
+            <column name="description">PERFECTLY BALANCED NUMBER.</column>
+            <column name="brewery_id">2</column>
+        </insert>
+        <insert tableName="beers">
+            <column name="id">9</column>
+            <column name="name">Jenlain Or</column>
+            <column name="abv">8</column>
+            <column name="description">THE BREWERY'S MOST PRECIOUS TREASURE.</column>
+            <column name="brewery_id">2</column>
+        </insert>
+        <insert tableName="beers">
+            <column name="id">10</column>
+            <column name="name">Jenlain Ardente</column>
+            <column name="abv">3.1</column>
+            <column name="description">THE FRUITS OF IMAGINATION.</column>
+            <column name="brewery_id">2</column>
+        </insert>
+        <insert tableName="beers">
+            <column name="id">11</column>
+            <column name="name">Jenlain Blanche</column>
+            <column name="abv">4.3</column>
+            <column name="description">INSTANTANEOUS FRESHNESS.</column>
+            <column name="brewery_id">2</column>
+        </insert>
+
+        <rollback>
+            <delete tableName="beers"/>
+            <delete tableName="breweries"/>
+        </rollback>
+
+    </changeSet>
+
+</databaseChangeLog>

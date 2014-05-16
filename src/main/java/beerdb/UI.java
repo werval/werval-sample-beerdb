@@ -17,6 +17,7 @@ package beerdb;
 
 import java.util.HashMap;
 import java.util.Map;
+import org.qiweb.api.cache.Cached;
 import org.qiweb.api.controllers.ClasspathResources;
 import org.qiweb.api.outcomes.Outcome;
 import org.rythmengine.RythmEngine;
@@ -28,6 +29,7 @@ import static org.qiweb.api.mime.MimeTypesNames.TEXT_HTML;
 
 public class UI
 {
+    @Cached
     public Outcome app()
     {
         Map<String, Object> params = new HashMap<>();

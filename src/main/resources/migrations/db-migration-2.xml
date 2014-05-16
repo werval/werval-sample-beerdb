@@ -53,7 +53,7 @@
                 history... From Léon to Raymond Duyck, discover the fascinating story of this devoted
                 family!
             </column>
-            <column name="beers_count">0</column>
+            <column name="beers_count">8</column>
         </insert>
         <insert tableName="beers">
             <column name="id">4</column>

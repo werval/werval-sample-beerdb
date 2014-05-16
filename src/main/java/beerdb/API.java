@@ -27,11 +27,13 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.validation.ConstraintViolationException;
+import org.qiweb.api.cache.Cached;
 import org.qiweb.api.outcomes.Outcome;
 import org.qiweb.modules.jpa.JPA;
 import org.qiweb.modules.json.JsonPluginException;
 
 import static org.qiweb.api.context.CurrentContext.application;
+import static org.qiweb.api.context.CurrentContext.mimeTypes;
 import static org.qiweb.api.context.CurrentContext.outcomes;
 import static org.qiweb.api.context.CurrentContext.request;
 import static org.qiweb.api.context.CurrentContext.reverseRoutes;
@@ -39,9 +41,6 @@ import static org.qiweb.api.http.Headers.Names.LOCATION;
 import static org.qiweb.api.mime.MimeTypesNames.APPLICATION_JSON;
 import static org.qiweb.modules.json.JSON.json;
 
-// TODO SECURITY Filter inputs
-// TODO SECURITY Escape outputs
-// See http://stefanhendriks.wordpress.com/2011/02/16/prevent-cross-site-scripting-when-using-json-objects-using-esapi-and-jackson-framework-1-7-x/
 public class API
 {
     private final int PAGE_SIZE = 8;
@@ -52,11 +51,12 @@ public class API
         this.emf = application().plugin( JPA.class ).emf();
     }
 
+    @Cached
     public Outcome index()
         throws JsonProcessingException
     {
         // TODO Add hyperlinks to all endpoints
-        return outcomes().ok( "{}" ).as( APPLICATION_JSON ).build();
+        return outcomes().ok( "{}" ).as( mimeTypes().withCharsetOfTextual( APPLICATION_JSON ) ).build();
     }
 
     //
@@ -120,7 +120,7 @@ public class API
             return outcomes().
                 created().
                 withHeader( LOCATION, breweryRoute ).
-                as( APPLICATION_JSON ).
+                as( mimeTypes().withCharsetOfTextual( APPLICATION_JSON ) ).
                 withBody( json ).
                 build();
         }
@@ -146,7 +146,7 @@ public class API
                 return notFound( "Brewery" );
             }
             byte[] json = json().toJSON( brewery, Json.BreweryDetailView.class );
-            return outcomes().ok( json ).as( APPLICATION_JSON ).build();
+            return outcomes().ok( json ).as( mimeTypes().withCharsetOfTextual( APPLICATION_JSON ) ).build();
         }
         finally
         {
@@ -200,7 +200,10 @@ public class API
             }
             if( brewery.getBeersCount() > 0 )
             {
-                return outcomes().conflict().withBody( "Does not have zero beers." ).as( APPLICATION_JSON ).build();
+                return outcomes().conflict()
+                    .withBody( "Does not have zero beers." )
+                    .as( mimeTypes().withCharsetOfTextual( APPLICATION_JSON ) )
+                    .build();
             }
             em.remove( brewery );
             em.getTransaction().commit();
@@ -285,7 +288,7 @@ public class API
             return outcomes().
                 created().
                 withHeader( LOCATION, beerRoute ).
-                as( APPLICATION_JSON ).
+                as( mimeTypes().withCharsetOfTextual( APPLICATION_JSON ) ).
                 withBody( json ).
                 build();
         }
@@ -311,7 +314,7 @@ public class API
                 return notFound( "Beer" );
             }
             byte[] json = json().toJSON( beer, Json.BeerDetailView.class );
-            return outcomes().ok( json ).as( APPLICATION_JSON ).build();
+            return outcomes().ok( json ).as( mimeTypes().withCharsetOfTextual( APPLICATION_JSON ) ).build();
         }
         finally
         {
@@ -379,13 +382,19 @@ public class API
     private Outcome notFound( String what )
         throws JsonProcessingException
     {
-        return outcomes().notFound().withBody( errorBody( what + " not found" ) ).as( APPLICATION_JSON ).build();
+        return outcomes().notFound()
+            .withBody( errorBody( what + " not found" ) )
+            .as( mimeTypes().withCharsetOfTextual( APPLICATION_JSON ) )
+            .build();
     }
 
     private Outcome badRequest( String... messages )
         throws JsonProcessingException
     {
-        return outcomes().badRequest().withBody( errorBody( messages ) ).as( APPLICATION_JSON ).build();
+        return outcomes().badRequest()
+            .withBody( errorBody( messages ) )
+            .as( mimeTypes().withCharsetOfTextual( APPLICATION_JSON ) )
+            .build();
     }
 
     private byte[] errorBody( String... messages )

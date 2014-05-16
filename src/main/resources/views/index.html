@@ -53,15 +53,8 @@
                         </h2>
                     </div>
 
-                    <form class="inline-form">
-                        <div class="form-group">
-                            <label class="sr-only" for="search">Search</label>
-                            <input type="search" class="form-control input-sm" id="search" placeholder="Type to search breweries" ng-model="query">
-                        </div>
-                    </form>
-
                     <div class="list-group">
-                        <a href="#/breweries/{{brewery.id}}" class="list-group-item" ng-repeat="brewery in breweries | filter:query">
+                        <a href="#/breweries/{{brewery.id}}" class="list-group-item" ng-repeat="brewery in breweries">
                             <span class="pull-right badge">{{brewery.beers_count}} beers</span>
                             <img class="brewery-icon" src="/assets/images/barrels.png"/>
                             <h4 class="list-group-item-heading">{{brewery.name}}</h4>
@@ -136,15 +129,8 @@
                     </span>
                 </h3>
 
-                <form class="inline-form">
-                    <div class="form-group">
-                        <label class="sr-only" for="search">Search</label>
-                        <input type="search" class="form-control input-sm" id="search" placeholder="Type to search beers" ng-model="query">
-                    </div>
-                </form>
-
                 <div class="list-group">
-                    <a href="#/beers/{{beer.id}}" class="list-group-item" ng-repeat="beer in brewery.beers | filter:query">
+                    <a href="#/beers/{{beer.id}}" class="list-group-item" ng-repeat="beer in brewery.beers">
                         <span class="pull-right label label-danger">Red</span>
                         <img class="beer-icon" src="/assets/images/beer.png"/>
                         <h4 class="list-group-item-heading">{{beer.name}}</h4>
@@ -170,15 +156,8 @@
                         </h2>
                     </div>
 
-                    <form class="inline-form">
-                        <div class="form-group">
-                            <label class="sr-only" for="search">Search</label>
-                            <input type="search" class="form-control input-sm" id="search" placeholder="Type to search beers" ng-model="query">
-                        </div>
-                    </form>
-
                     <div class="list-group">
-                        <a href="#/beers/{{beer.id}}" class="list-group-item" ng-repeat="beer in beers | filter:query">
+                        <a href="#/beers/{{beer.id}}" class="list-group-item" ng-repeat="beer in beers">
                             <span class="pull-right label label-danger">Red</span>
                             <img class="beer-icon" src="/assets/images/beer.png"/>
                             <h4 class="list-group-item-heading">{{beer.name}}</h4>

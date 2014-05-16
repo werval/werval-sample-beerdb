@@ -17,6 +17,7 @@ package beerdb;
 
 import beerdb.entities.Beer;
 import beerdb.entities.Brewery;
+import beerdb.values.Page;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -43,6 +44,7 @@ import static org.qiweb.modules.json.JSON.json;
 // See http://stefanhendriks.wordpress.com/2011/02/16/prevent-cross-site-scripting-when-using-json-objects-using-esapi-and-jackson-framework-1-7-x/
 public class API
 {
+    private final int PAGE_SIZE = 8;
     private final EntityManagerFactory emf;
 
     public API()
@@ -64,15 +66,24 @@ public class API
     // |_____|_| |___|_____|___|_| |_|___|___|
     // _________________________________________________________________________________________________________________
     //
-    public Outcome breweries()
+    public Outcome breweries( Integer page, String sortBy, String order )
         throws JsonProcessingException
     {
+        if( page < 1 )
+        {
+            page = 1;
+        }
         EntityManager em = emf.createEntityManager();
         try
         {
-            List<Brewery> breweries = em.createQuery( "select b from Brewery b", Brewery.class ).getResultList();
-            byte[] json = json().toJSON( breweries, Json.BreweryListView.class );
-            return outcomes().ok( json ).as( APPLICATION_JSON ).build();
+            Long total = em.createQuery( "select count(b) from Brewery b", Long.class ).getSingleResult();
+            List<Brewery> breweries = em.createQuery(
+                "select b from Brewery b order by b." + sortBy + " " + order, Brewery.class )
+                .setFirstResult( ( page - 1 ) * PAGE_SIZE )
+                .setMaxResults( PAGE_SIZE )
+                .getResultList();
+            byte[] json = json().toJSON( new Page<>( total, page, PAGE_SIZE, breweries ), Json.BreweryListView.class );
+            return outcomes().ok( json ).as( mimeTypes().withCharsetOfTextual( APPLICATION_JSON ) ).build();
         }
         finally
         {
@@ -208,15 +219,24 @@ public class API
     // |_____|___|___|_| |___|
     // _________________________________________________________________________________________________________________
     //
-    public Outcome beers()
+    public Outcome beers( Integer page, String sortBy, String order )
         throws JsonProcessingException
     {
+        if( page < 1 )
+        {
+            page = 1;
+        }
         EntityManager em = emf.createEntityManager();
         try
         {
-            List<Beer> beers = em.createQuery( "select b from Beer b", Beer.class ).getResultList();
-            byte[] json = json().toJSON( beers, Json.BeerListView.class );
-            return outcomes().ok( json ).as( APPLICATION_JSON ).build();
+            Long total = em.createQuery( "select count(b) from Beer b", Long.class ).getSingleResult();
+            List<Beer> beers = em.createQuery(
+                "select b from Beer b order by b." + sortBy + " " + order, Beer.class )
+                .setFirstResult( ( page - 1 ) * PAGE_SIZE )
+                .setMaxResults( PAGE_SIZE )
+                .getResultList();
+            byte[] json = json().toJSON( new Page<>( total, page, PAGE_SIZE, beers ), Json.BeerListView.class );
+            return outcomes().ok( json ).as( mimeTypes().withCharsetOfTextual( APPLICATION_JSON ) ).build();
         }
         finally
         {

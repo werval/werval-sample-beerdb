@@ -26,6 +26,8 @@ import static org.hamcrest.Matchers.endsWith;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.core.Is.is;
 import static org.qiweb.api.http.Headers.Names.LOCATION;
 import static org.qiweb.api.mime.MimeTypesNames.APPLICATION_JSON;
 import static org.qiweb.api.mime.MimeTypesNames.TEXT_PLAIN;
@@ -232,8 +234,9 @@ public class APITest
         expect().
             statusCode( 200 ).
             contentType( APPLICATION_JSON ).
-            body( "", hasSize( 3 ) ).
-            body( "name", hasItems( "ZengBrewery" ) ).
+            body( "total", is( 3 ) ).
+            body( "list", hasSize( 3 ) ).
+            body( "list.name", hasItems( "ZengBrewery" ) ).
             when().
             get( "/api/breweries" );
 
@@ -245,7 +248,8 @@ public class APITest
         expect().
             statusCode( 200 ).
             contentType( APPLICATION_JSON ).
-            body( "breweries", hasSize( 2 ) ).
+            body( "total", is( 2 ) ).
+            body( "list", hasSize( 2 ) ).
             when().
             get( "/api/breweries" );
     }

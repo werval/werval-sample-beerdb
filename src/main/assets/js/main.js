@@ -11,6 +11,12 @@ function asArray(eventualArray) {
         return [];
     return angular.isArray(eventualArray) ? eventualArray : [eventualArray];
 }
+function range_array(begin, end) {
+    var range = [];
+    for (var idx = begin; idx <= end; idx++)
+        range.push(idx);
+    return range;
+}
 
 var beerdb = angular.module('BeerDB', ['ngRoute', 'ngSanitize']);
 
@@ -59,9 +65,15 @@ beerdb.controller('FooterCtrl', [
 
 
 beerdb.controller('BreweriesCtrl', [
-    '$scope', '$http', function($scope, $http) {
-        $http.get('/api/breweries').success(function(data) {
-            $scope.breweries = data;
+    '$scope', '$http', '$location', function($scope, $http, $location) {
+        var p = $location.search().page ? $location.search().page : 1;
+        $http.get('/api/breweries?page=' + p).success(function(data) {
+            $scope.total = data.total;
+            $scope.page = data.page;
+            $scope.total_pages = Math.ceil(data.total / data.page_size);
+            $scope.page_size = data.page_size;
+            $scope.pages = range_array(1, $scope.total_pages);
+            $scope.breweries = data.list;
             $scope.loaded = true;
         });
     }
@@ -118,9 +130,15 @@ beerdb.controller('EditBreweryCtrl', [
 
 
 beerdb.controller('BeersCtrl', [
-    '$scope', '$http', function($scope, $http) {
-        $http.get('/api/beers').success(function(data) {
-            $scope.beers = data;
+    '$scope', '$http', '$location', function($scope, $http, $location) {
+        var p = $location.search().page ? $location.search().page : 1;
+        $http.get('/api/beers?page=' + p).success(function(data) {
+            $scope.total = data.total;
+            $scope.page = data.page;
+            $scope.total_pages = Math.ceil(data.total / data.page_size);
+            $scope.page_size = data.page_size;
+            $scope.pages = range_array(1, $scope.total_pages);
+            $scope.beers = data.list;
             $scope.loaded = true;
         });
     }

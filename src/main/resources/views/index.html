@@ -49,7 +49,7 @@
                                 <a title="Add Brewery" href="#/breweries/new" class="add-button" data-toggle="tooltip" data-placement="left"><i></i></a>
                             </span>
                             Breweries
-                            <small ng-bind-template="{{breweries.length}} and counting"></small>
+                            <small ng-bind-template="{{total}} total"></small>
                         </h2>
                     </div>
 
@@ -60,6 +60,14 @@
                             <h4 class="list-group-item-heading">{{brewery.name}}</h4>
                             <p class="list-group-item-text"><small style="color: lightgray">Brewing since</small> {{brewery.since}}</p>
                         </a>
+                    </div>
+
+                    <div class="pagination-container" ng-show="total > page_size">
+                        <ul class="pagination">
+                            <li ng-class="{disabled: page==1}"><a href="#/breweries?page=1">&laquo;</a></li>
+                            <li ng-repeat="p in pages" ng-class="{active: page==p}"><a href="#/breweries?page={{p}}">{{p}}</a></li>
+                            <li ng-class="{disabled: page==total_pages}"><a href="#/breweries?page={{total_pages}}">&raquo;</a></li>
+                        </ul>
                     </div>
 
                     <!--
@@ -149,10 +157,11 @@
 
                     <div class="page-header">
                         <h2>
-                            Beers
                             <span class="pull-right">
                                 <a href="#/beers/new" class="add-button" data-toggle="tooltip" title="Add Beer" data-placement="left"><i></i></a>
                             </span>
+                            Beers
+                            <small ng-bind-template="{{total}} total"></small>
                         </h2>
                     </div>
 
@@ -163,6 +172,14 @@
                             <h4 class="list-group-item-heading">{{beer.name}}</h4>
                             <p class="list-group-item-text"> <small style="color: lightgray">Brewed by</small> {{beer.brewery.name}}</p>
                         </a>
+                    </div>
+
+                    <div class="pagination-container" ng-show="total > page_size">
+                        <ul class="pagination">
+                            <li ng-class="{disabled: page==1}"><a href="#/beers?page=1">&laquo;</a></li>
+                            <li ng-repeat="p in pages" ng-class="{active: page==p}"><a href="#/beers?page={{p}}">{{p}}</a></li>
+                            <li ng-class="{disabled: page==total_pages}"><a href="#/beers?page={{total_pages}}">&raquo;</a></li>
+                        </ul>
                     </div>
 
                     <!--

@@ -1,4 +1,5 @@
 build
 .gradle
 .nb-gradle
+private
 

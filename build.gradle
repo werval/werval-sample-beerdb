@@ -1,58 +1,59 @@
+
+//
+//     __             
+//  __|  |___ _ _ ___ 
+// |  |  | .'| | | .'|
+// |_____|__,|\_/|__,|
+// ____________________________________________________________________________
+//
+
+apply plugin: 'java'
+sourceCompatibility = '1.8'
+targetCompatibility = '1.8'
+[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+
+
+//
+//  _____                 _ _           _
+// | __  |___ ___ ___ ___|_| |_ ___ ___|_|___ ___
+// |    -| -_| . | . |_ -| |  _| . |  _| | -_|_ -|
+// |__|__|___|  _|___|___|_|_| |___|_| |_|___|___|
+//           |_|
+// ____________________________________________________________________________
+//
+
 buildscript {
-    repositories {
+	repositories {
         maven { url qiwebLocalRepository }
-        maven { url "https://repo.codeartisans.org/qiweb"; credentials { username = "qiweb"; password = "qiweb" } }
+    	maven {
+    		url "https://repo.codeartisans.org/qiweb"
+    		credentials { username = "qiweb"; password = "qiweb" }
+		}
         mavenCentral()
-    }
-    dependencies {
-        classpath 'org.qiweb:org.qiweb.gradle:0'
-        classpath 'de.obqo.gradle:gradle-lesscss-plugin:1.0-1.3.3'
-    }
+	}
 }
 repositories {
     maven { url qiwebLocalRepository }
-    maven { url "https://repo.codeartisans.org/qiweb"; credentials { username = "qiweb"; password = "qiweb" } }
+    maven {
+    	url "https://repo.codeartisans.org/qiweb"
+    	credentials { username = "qiweb"; password = "qiweb" }
+	}
     mavenCentral()
 }
 
-apply plugin: 'java'
-apply plugin: 'qiweb'
-apply plugin: 'application'
 
-task stage(dependsOn: ['clean', 'installApp'])
+//
+//  ____                    _             _
+// |    \ ___ ___ ___ ___ _| |___ ___ ___|_|___ ___
+// |  |  | -_| . | -_|   | . | -_|   |  _| | -_|_ -|
+// |____/|___|  _|___|_|_|___|___|_|_|___|_|___|___|
+//           |_|
+// ____________________________________________________________________________
+//
 
 configurations {
     assets
 }
-
-devshell {
-    extraWatch += [ "src/main/assets" ]
-}
-
-applicationName = 'beerdb'
-mainClassName = 'org.qiweb.server.bootstrap.Main'
-applicationDistribution.from( "src/main/resources" ) {
-    include "*.conf"
-    into "etc"
-}
-startScripts {
-    defaultJvmOpts = [ "-server", "-Xmx128m" ]
-}
-tasks.startScripts {
-    doLast {
-        def scriptShellFile = file "${outputDir}/${applicationName}"
-        def scriptBatchFile = file "${outputDir}/${applicationName}.bat"
-        scriptShellFile.text = scriptShellFile.text.replace( 'CLASSPATH=$APP_HOME/lib',
-                                                             'CLASSPATH=$APP_HOME/etc/:$APP_HOME/lib')
-        scriptBatchFile.text = scriptBatchFile.text.replace( 'CLASSPATH=%APP_HOME%\\lib',
-                                                             'CLASSPATH=%APP_HOME%\\etc\\;%APP_HOME%\\lib' )
-    }
-}
-
-artifacts {
-    archives distZip
-}
-
 dependencies {
 
     assets "org.webjars:angularjs:1.2.13"
@@ -124,6 +125,7 @@ task prepareLessFiles( type: Copy, dependsOn: extractWebJars ) {
     into 'build/less'
 }
 
+buildscript { dependencies { classpath 'de.obqo.gradle:gradle-lesscss-plugin:1.0-1.3.3' } }
 apply plugin: 'lesscss'
 lesscss {
     source = fileTree( 'build/less' ) {
@@ -146,3 +148,64 @@ task copyAssets( type: Copy, dependsOn: [ concatJs, optimizeCss, copyFonts ] ) {
 
 processResources.dependsOn copyAssets
 sourceSets.main.resources.srcDir file( "build/generated-src/assets/resources" )
+
+
+//
+//  _____ _ _ _ _     _
+// |     |_| | | |___| |_
+// |  |  | | | | | -_| . |
+// |__  _|_|_____|___|___|
+//    |__|
+// ____________________________________________________________________________
+//
+
+buildscript { dependencies { classpath 'org.qiweb:org.qiweb.gradle:0' } }
+apply plugin: 'qiweb'
+devshell {
+    extraWatch += [ "src/main/assets", "src/main/web" ]
+}
+
+
+//  _____         _           _
+// |  _  |___ ___| |_ ___ ___|_|___ ___
+// |   __| .'|  _| '_| .'| . | |   | . |
+// |__|  |__,|___|_,_|__,|_  |_|_|_|_  |
+//                       |___|     |___|
+// ____________________________________________________________________________
+//
+
+apply plugin: 'application'
+applicationName = 'beerdb'
+mainClassName = 'org.qiweb.server.bootstrap.Main'
+applicationDistribution.from( "src/main/resources" ) {
+    include "*.conf"
+    into "etc"
+}
+startScripts {
+    defaultJvmOpts = [ "-server", "-Xmx128m" ]
+}
+tasks.startScripts {
+    doLast {
+        def scriptShellFile = file "${outputDir}/${applicationName}"
+        def scriptBatchFile = file "${outputDir}/${applicationName}.bat"
+        scriptShellFile.text = scriptShellFile.text.replace( 'CLASSPATH=$APP_HOME/lib',
+                                                             'CLASSPATH=$APP_HOME/etc/:$APP_HOME/lib')
+        scriptBatchFile.text = scriptBatchFile.text.replace( 'CLASSPATH=%APP_HOME%\\lib',
+                                                             'CLASSPATH=%APP_HOME%\\etc\\;%APP_HOME%\\lib' )
+    }
+}
+artifacts {
+    archives distZip
+}
+
+
+//
+//  _____             _          ____          _                       _
+// |  |  |___ ___ ___| |_ _ _   |    \ ___ ___| |___ _ _ _____ ___ ___| |_
+// |     | -_|  _| . | '_| | |  |  |  | -_| . | | . | | |     | -_|   |  _|
+// |__|__|___|_| |___|_,_|___|  |____/|___|  _|_|___|_  |_|_|_|___|_|_|_|
+//                                        |_|       |___|
+// ____________________________________________________________________________
+//
+
+task stage(dependsOn: ['clean', 'installApp'])

@@ -191,6 +191,7 @@ asciidoctor {
     options = [
         compact: true,
         attributes: [
+            'qiweb-version': version,
             'beerdb-version': version,
             'toc2': ''
         ]

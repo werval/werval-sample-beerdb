@@ -11,4 +11,6 @@
         <appender-ref ref="stdout" />
     </root>
 
+    <logger name="org.qiweb.runtime" level="info"/>
+
 </configuration>

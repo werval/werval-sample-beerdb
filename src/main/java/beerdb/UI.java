@@ -18,7 +18,7 @@ package beerdb;
 import java.util.HashMap;
 import java.util.Map;
 import org.qiweb.api.cache.Cached;
-import org.qiweb.api.controllers.ClasspathResources;
+import org.qiweb.api.controllers.Classpath;
 import org.qiweb.api.outcomes.Outcome;
 import org.rythmengine.RythmEngine;
 
@@ -33,8 +33,8 @@ public class UI
     public Outcome app()
     {
         Map<String, Object> params = new HashMap<>();
-        params.put( "css", reverseRoutes().get( ClasspathResources.class, c -> c.resource( "assets/", "css/main.css" ) ).httpUrl() );
-        params.put( "js", reverseRoutes().get( ClasspathResources.class, c -> c.resource( "assets/", "js/main.js" ) ).httpUrl() );
+        params.put( "css", reverseRoutes().get( Classpath.class, c -> c.resource( "assets/", "css/main.css" ) ).httpUrl() );
+        params.put( "js", reverseRoutes().get( Classpath.class, c -> c.resource( "assets/", "js/main.js" ) ).httpUrl() );
         String body = application().plugin( RythmEngine.class ).render( "index.html", params );
         return outcomes().ok().as( TEXT_HTML ).withBody( body ).build();
     }

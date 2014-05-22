@@ -166,6 +166,39 @@ devshell {
 }
 
 
+//
+//  ____                            _       _   _
+// |    \ ___ ___ _ _ _____ ___ ___| |_ ___| |_|_|___ ___
+// |  |  | . |  _| | |     | -_|   |  _| .'|  _| | . |   |
+// |____/|___|___|___|_|_|_|___|_|_|_| |__,|_| |_|___|_|_|
+//
+
+buildscript {
+    repositories {
+        maven { url 'http://dl.bintray.com/content/aalmiray/asciidoctor' }
+        maven { url 'http://jcenter.bintray.com' }
+    }
+    dependencies {
+        classpath 'org.asciidoctor:asciidoctor-gradle-plugin:0.7.0'
+    }
+}
+apply plugin: 'asciidoctor'
+asciidoctor {
+    inputs.dir file( 'src/doc' )
+    sourceDir = file( 'src/doc' )
+    outputDir = file( 'build/docs/asciidoctor' )
+    backend = 'html5'
+    options = [
+        compact: true,
+        attributes: [
+            'beerdb-version': version,
+            'toc2': ''
+        ]
+    ]
+    logDocuments = true
+}
+
+
 //  _____         _           _
 // |  _  |___ ___| |_ ___ ___|_|___ ___
 // |   __| .'|  _| '_| .'| . | |   | . |

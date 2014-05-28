@@ -1,4 +1,6 @@
 
+description = "QiWeb Sample - Beer Database"
+
 //
 //     __             
 //  __|  |___ _ _ ___ 
@@ -243,3 +245,46 @@ artifacts {
 //
 
 task stage(dependsOn: ['clean', 'installApp'])
+
+
+//
+//  ____                            _       _   _
+// |    \ ___ ___ _ _ _____ ___ ___| |_ ___| |_|_|___ ___
+// |  |  | . |  _| | |     | -_|   |  _| .'|  _| | . |   |
+// |____/|___|___|___|_|_|_|___|_|_|_| |__,|_| |_|___|_|_|
+//
+/// ____________________________________________________________________________
+
+buildscript {
+    repositories {
+        maven { url 'http://dl.bintray.com/content/aalmiray/asciidoctor' }
+        maven { url 'http://jcenter.bintray.com' }
+    }
+    dependencies { classpath 'org.asciidoctor:asciidoctor-gradle-plugin:0.7.0' }
+}
+// Generate documentation resources using Asciidoctor
+apply plugin: 'asciidoctor'
+asciidoctor {
+    baseDir = file( 'src/doc' )
+    sourceDir = file( 'src/doc' )
+    outputDir = file( 'build/docs/asciidoc' )
+    backend = 'html5'
+    logDocuments = true
+    options = [
+        compact: true,
+        attributes: [
+            'toc': 'right',
+            'linkattrs': '',
+            'linkcss':'',
+            'source-highlighter': 'coderay', 'coderay-css': 'class',
+            'qiweb-version': version
+        ]
+    ]
+    doLast {
+        copy {
+            from 'src/doc'
+            into 'build/docs/asciidoc'
+            excludes += [ '**/*.asciidoc', '**/*.adoc', '**/*.asc', '**/*.ad' ]
+        }
+    }
+}

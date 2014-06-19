@@ -18,8 +18,8 @@ package beerdb;
 import java.util.HashMap;
 import java.util.Map;
 import org.qiweb.api.cache.Cached;
-import org.qiweb.api.controllers.Classpath;
 import org.qiweb.api.outcomes.Outcome;
+import org.qiweb.controllers.Classpath;
 import org.rythmengine.RythmEngine;
 
 import static org.qiweb.api.context.CurrentContext.application;

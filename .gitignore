@@ -3,3 +3,4 @@ build
 .nb-gradle
 private
 
+.devshell.lock

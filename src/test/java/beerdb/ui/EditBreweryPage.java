@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2013 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,6 +16,7 @@
 package beerdb.ui;
 
 import com.google.common.base.Predicate;
+import org.fluentlenium.core.Fluent;
 import org.fluentlenium.core.FluentPage;
 import org.openqa.selenium.WebDriver;
 import org.qiweb.api.util.Strings;
@@ -97,12 +98,12 @@ public class EditBreweryPage
         findFirst( ".save-button" ).click();
         if( waitForRedirect )
         {
-            await().until( new Predicate<WebDriver>()
+            await().until( new Predicate<Fluent>()
             {
                 @Override
-                public boolean apply( WebDriver driver )
+                public boolean apply( Fluent lenium )
                 {
-                    return !driver.getCurrentUrl().endsWith( "edit" );
+                    return !lenium.getDriver().getCurrentUrl().endsWith( "edit" );
                 }
             } );
         }

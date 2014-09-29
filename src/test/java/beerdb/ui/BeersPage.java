@@ -51,6 +51,12 @@ public class BeersPage
         assertThat( findFirst( "#beers" ) ).isNotNull();
     }
 
+    public long totalCount()
+    {
+        String displayCountText = findFirst( ".page-header h2 small" ).getText().trim();
+        return Integer.valueOf( displayCountText.substring( 0, displayCountText.indexOf( ' ' ) ) );
+    }
+
     public int listCount()
     {
         return find( ".list-group a" ).size();

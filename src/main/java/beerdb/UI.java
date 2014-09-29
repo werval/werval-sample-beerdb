@@ -25,7 +25,6 @@ import org.rythmengine.RythmEngine;
 import static org.qiweb.api.context.CurrentContext.application;
 import static org.qiweb.api.context.CurrentContext.outcomes;
 import static org.qiweb.api.context.CurrentContext.reverseRoutes;
-import static org.qiweb.api.mime.MimeTypesNames.TEXT_HTML;
 
 public class UI
 {
@@ -36,6 +35,6 @@ public class UI
         params.put( "css", reverseRoutes().get( Classpath.class, c -> c.resource( "assets/", "css/main.css" ) ).httpUrl() );
         params.put( "js", reverseRoutes().get( Classpath.class, c -> c.resource( "assets/", "js/main.js" ) ).httpUrl() );
         String body = application().plugin( RythmEngine.class ).render( "index.html", params );
-        return outcomes().ok().as( TEXT_HTML ).withBody( body ).build();
+        return outcomes().ok().asHtml().withBody( body ).build();
     }
 }

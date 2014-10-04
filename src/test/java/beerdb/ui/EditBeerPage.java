@@ -19,11 +19,11 @@ import com.google.common.base.Predicate;
 import org.fluentlenium.core.Fluent;
 import org.fluentlenium.core.FluentPage;
 import org.openqa.selenium.WebDriver;
-import org.qiweb.api.util.Strings;
+import org.qiweb.util.Strings;
 
 import static org.fest.assertions.Assertions.assertThat;
 import static org.fest.assertions.fluentlenium.FluentLeniumAssertions.assertThat;
-import static org.qiweb.api.util.IllegalArguments.ensureNotEmpty;
+import static org.qiweb.util.IllegalArguments.ensureNotEmpty;
 
 /**
  * Edit Beer Page Object.

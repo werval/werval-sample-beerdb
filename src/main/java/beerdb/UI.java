@@ -26,7 +26,7 @@ import org.qiweb.filters.Cached;
 import static org.qiweb.api.context.CurrentContext.outcomes;
 import static org.qiweb.api.context.CurrentContext.plugin;
 import static org.qiweb.api.context.CurrentContext.reverseRoutes;
-import static org.qiweb.api.util.Maps.fromMap;
+import static org.qiweb.util.Maps.fromMap;
 
 public class UI
 {

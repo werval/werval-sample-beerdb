@@ -11,6 +11,11 @@
         <appender-ref ref="stdout" />
     </root>
 
-    <logger name="org.qiweb.runtime" level="info"/>
+    <logger name="org.qiweb" level="info"/>
+
+    <!--
+    <logger name="liquibase" level="info"/>
+    <logger name="org.rythmengine" level="trace"/>
+    -->
 
 </configuration>

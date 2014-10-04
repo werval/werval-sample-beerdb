@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 the original author or authors
+ * Copyright (c) 2013-2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,26 +15,30 @@
  */
 package beerdb;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
-import org.qiweb.api.cache.Cached;
 import org.qiweb.api.outcomes.Outcome;
+import org.qiweb.api.templates.Template;
+import org.qiweb.api.templates.Templates;
 import org.qiweb.controllers.Classpath;
-import org.rythmengine.RythmEngine;
+import org.qiweb.filters.Cached;
 
-import static org.qiweb.api.context.CurrentContext.application;
 import static org.qiweb.api.context.CurrentContext.outcomes;
+import static org.qiweb.api.context.CurrentContext.plugin;
 import static org.qiweb.api.context.CurrentContext.reverseRoutes;
+import static org.qiweb.api.util.Maps.fromMap;
 
 public class UI
 {
     @Cached
     public Outcome app()
     {
-        Map<String, Object> params = new HashMap<>();
-        params.put( "css", reverseRoutes().get( Classpath.class, c -> c.resource( "assets/", "css/main.css" ) ).httpUrl() );
-        params.put( "js", reverseRoutes().get( Classpath.class, c -> c.resource( "assets/", "js/main.js" ) ).httpUrl() );
-        String body = application().plugin( RythmEngine.class ).render( "index.html", params );
+        Map<String, Object> context = fromMap( new LinkedHashMap<String, Object>() )
+            .put( "css", reverseRoutes().get( Classpath.class, c -> c.resource( "assets/", "css/main.css" ) ).httpUrl() )
+            .put( "js", reverseRoutes().get( Classpath.class, c -> c.resource( "assets/", "js/main.js" ) ).httpUrl() )
+            .toMap();
+        Template template = plugin( Templates.class ).named( "index.html" );
+        String body = template.render( context );
         return outcomes().ok().asHtml().withBody( body ).build();
     }
 }

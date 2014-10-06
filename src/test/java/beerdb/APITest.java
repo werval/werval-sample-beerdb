@@ -140,7 +140,7 @@ public class APITest
         // Malicious HTML input
         given().
             contentType( APPLICATION_JSON ).
-            body( "{ \"name\":\"Zeng<a>Brewery\", \"url\":\"http://zeng-beers.com/\", \"description\":\"<script>alert('powned');</script>\" }" ).
+            body( "{ \"name\":\"Zeng<a>Brewery\", \"url\":\"http://zeng-beers.com/\", \"description\":\"\\uFE64script\\uFE65alert('powned');\\uFE64/script\\uFE65\" }" ).
             expect().
             statusCode( 400 ).
             body( containsString( "name" ) ).
@@ -223,7 +223,7 @@ public class APITest
         // Malicious HTML input
         given().
             contentType( APPLICATION_JSON ).
-            body( "{ \"brewery_id\": " + breweryId + ", \"name\":\"Zeng<a>Beer\", \"abv\": 101, \"description\":\"<script>alert('powned');</script>\" }" ).
+            body( "{ \"brewery_id\": " + breweryId + ", \"name\":\"Zeng<a>Beer\", \"abv\": 101, \"description\":\"\\uFE64script\\uFE65alert('powned');\\uFE64/script\\uFE65\" }" ).
             expect().
             statusCode( 400 ).
             body( containsString( "name" ) ).

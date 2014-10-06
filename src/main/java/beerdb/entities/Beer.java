@@ -21,6 +21,7 @@ import beerdb.Json.BreweryDetailView;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import java.text.Normalizer;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -98,7 +99,9 @@ public class Beer
     @JsonDeserialize
     public void setName( String name )
     {
-        this.name = name == null ? null : name.trim();
+        this.name = name == null
+                    ? null
+                    : Normalizer.normalize( name, Normalizer.Form.NFKC ).trim();
     }
 
     public void setAbv( Float abv )
@@ -109,6 +112,8 @@ public class Beer
     @JsonDeserialize
     public void setDescription( String description )
     {
-        this.description = description == null ? null : description.trim();
+        this.description = description == null
+                           ? null
+                           : Normalizer.normalize( description, Normalizer.Form.NFKC ).trim();
     }
 }

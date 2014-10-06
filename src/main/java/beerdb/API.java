@@ -27,6 +27,7 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.validation.ConstraintViolationException;
 import org.qiweb.api.outcomes.Outcome;
+import org.qiweb.filters.AcceptContentTypes;
 import org.qiweb.filters.XContentTypeOptions;
 import org.qiweb.modules.jpa.JPA;
 import org.qiweb.modules.json.JsonPluginException;
@@ -78,13 +79,10 @@ public class API
         return outcomes().ok( json ).asJson().build();
     }
 
+    @AcceptContentTypes( APPLICATION_JSON )
     public Outcome createBrewery()
         throws IOException
     {
-        if( !APPLICATION_JSON.equals( request().contentType() ) )
-        {
-            return badRequest( "Unacceptable content-type:" + request().contentType() );
-        }
         byte[] body = request().body().asBytes();
         Brewery brewery;
         try
@@ -129,13 +127,10 @@ public class API
         return outcomes().ok( json ).asJson().build();
     }
 
+    @AcceptContentTypes( APPLICATION_JSON )
     public Outcome updateBrewery( Long id )
         throws IOException
     {
-        if( !APPLICATION_JSON.equals( request().contentType() ) )
-        {
-            return badRequest( "Unacceptable content-type:" + request().contentType() );
-        }
         byte[] body = request().body().asBytes();
         try
         {
@@ -204,13 +199,10 @@ public class API
         return outcomes().ok( json ).asJson().build();
     }
 
+    @AcceptContentTypes( APPLICATION_JSON )
     public Outcome createBeer()
         throws IOException
     {
-        if( !APPLICATION_JSON.equals( request().contentType() ) )
-        {
-            return badRequest( "Unacceptable content-type:" + request().contentType() );
-        }
         byte[] body = request().body().asBytes();
         JsonNode bodyNode = json().fromJSON( body );
         if( !bodyNode.hasNonNull( "brewery_id" ) )
@@ -267,13 +259,10 @@ public class API
         return outcomes().ok( json ).asJson().build();
     }
 
+    @AcceptContentTypes( APPLICATION_JSON )
     public Outcome updateBeer( Long id )
         throws IOException
     {
-        if( !APPLICATION_JSON.equals( request().contentType() ) )
-        {
-            return badRequest( "Unacceptable content-type:" + request().contentType() );
-        }
         byte[] body = request().body().asBytes();
         try
         {

@@ -27,7 +27,6 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.validation.ConstraintViolationException;
 import org.qiweb.api.outcomes.Outcome;
-import org.qiweb.filters.Cached;
 import org.qiweb.modules.jpa.JPA;
 import org.qiweb.modules.json.JsonPluginException;
 
@@ -43,7 +42,6 @@ public class API
 {
     private final int PAGE_SIZE = 8;
 
-    @Cached
     public Outcome index()
         throws JsonProcessingException
     {

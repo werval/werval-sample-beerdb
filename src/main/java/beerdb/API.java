@@ -27,6 +27,7 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.validation.ConstraintViolationException;
 import org.qiweb.api.outcomes.Outcome;
+import org.qiweb.filters.XContentTypeOptions;
 import org.qiweb.modules.jpa.JPA;
 import org.qiweb.modules.json.JsonPluginException;
 
@@ -38,6 +39,7 @@ import static org.qiweb.api.http.Headers.Names.LOCATION;
 import static org.qiweb.api.mime.MimeTypesNames.APPLICATION_JSON;
 import static org.qiweb.modules.json.JSON.json;
 
+@XContentTypeOptions
 public class API
 {
     private final int PAGE_SIZE = 8;

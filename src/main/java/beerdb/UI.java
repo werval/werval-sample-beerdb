@@ -21,12 +21,14 @@ import org.qiweb.api.outcomes.Outcome;
 import org.qiweb.api.templates.Template;
 import org.qiweb.api.templates.Templates;
 import org.qiweb.controllers.Classpath;
+import org.qiweb.filters.XContentTypeOptions;
 
 import static org.qiweb.api.context.CurrentContext.outcomes;
 import static org.qiweb.api.context.CurrentContext.plugin;
 import static org.qiweb.api.context.CurrentContext.reverseRoutes;
 import static org.qiweb.util.Maps.fromMap;
 
+@XContentTypeOptions
 public class UI
 {
     public Outcome app()

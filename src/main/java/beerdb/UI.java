@@ -21,6 +21,7 @@ import org.qiweb.api.outcomes.Outcome;
 import org.qiweb.api.templates.Template;
 import org.qiweb.api.templates.Templates;
 import org.qiweb.controllers.Classpath;
+import org.qiweb.filters.ContentSecurityPolicy;
 import org.qiweb.filters.XFrameOptions;
 import org.qiweb.filters.XXSSProtection;
 import org.qiweb.filters.XContentTypeOptions;
@@ -33,6 +34,7 @@ import static org.qiweb.util.Maps.fromMap;
 @XContentTypeOptions
 public class UI
 {
+    @ContentSecurityPolicy
     @XFrameOptions
     @XXSSProtection
     public Outcome app()

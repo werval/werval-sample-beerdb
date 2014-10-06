@@ -6,7 +6,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
         <link href="@css" rel="stylesheet" media="screen">
     </head>
-    <body ng-app="BeerDB">
+    <body ng-app="BeerDB" ng-csp>
 
         <nav class="navbar navbar-default" role="navigation" ng-controller="NavBarCtrl">
             <div class="navbar-header">
@@ -58,7 +58,7 @@
                             <span class="pull-right badge">{{brewery.beers_count}} beers</span>
                             <img class="brewery-icon" src="/assets/images/barrels.png"/>
                             <h4 class="list-group-item-heading">{{brewery.name}}</h4>
-                            <p class="list-group-item-text"><small style="color: lightgray">Brewing since</small> {{brewery.since}}</p>
+                            <p class="list-group-item-text"><small class="faded">Brewing since</small> {{brewery.since}}</p>
                         </a>
                     </div>
 
@@ -170,7 +170,7 @@
                             <span class="pull-right label label-danger">Red</span>
                             <img class="beer-icon" src="/assets/images/beer.png"/>
                             <h4 class="list-group-item-heading">{{beer.name}}</h4>
-                            <p class="list-group-item-text"> <small style="color: lightgray">Brewed by</small> {{beer.brewery.name}}</p>
+                            <p class="list-group-item-text"> <small class="faded">Brewed by</small> {{beer.brewery.name}}</p>
                         </a>
                     </div>
 

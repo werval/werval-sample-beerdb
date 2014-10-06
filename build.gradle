@@ -59,10 +59,10 @@ configurations {
 }
 dependencies {
 
-    assets "org.webjars:angularjs:1.2.13"
+    assets "org.webjars:angularjs:1.2.25"
     assets "org.webjars:bootstrap:3.0.3"
-    assets "org.webjars:jquery:2.1.0-2"
-    assets "org.webjars:marked:0.2.10"
+    assets "org.webjars:jquery:2.1.1"
+    assets "org.webjars:marked:0.3.2-1"
 
     compile "org.qiweb:org.qiweb.api:$qiwebVersion"
     compile "org.qiweb:org.qiweb.modules.liquibase:$qiwebVersion"
@@ -112,12 +112,12 @@ task concatJs( dependsOn: extractWebJars ) {
     outputs.file 'build/assets/js/main.js'
     doLast {
         ant.concat( destfile: 'build/assets/js/main.js' ) {
-            fileset( file: 'build/webjars/marked/0.2.10/marked.js' )
-            fileset( file: 'build/webjars/jquery/2.1.0/jquery.js' )
+            fileset( file: 'build/webjars/marked/0.3.2/marked.js' )
+            fileset( file: 'build/webjars/jquery/2.1.1/jquery.js' )
             fileset( file: 'build/webjars/bootstrap/3.0.3/js/bootstrap.js' )
-            fileset( file: 'build/webjars/angularjs/1.2.13/angular.js' )
-            fileset( file: 'build/webjars/angularjs/1.2.13/angular-route.js' )
-            fileset( file: 'build/webjars/angularjs/1.2.13/angular-sanitize.js' )
+            fileset( file: 'build/webjars/angularjs/1.2.25/angular.js' )
+            fileset( file: 'build/webjars/angularjs/1.2.25/angular-route.js' )
+            fileset( file: 'build/webjars/angularjs/1.2.25/angular-sanitize.js' )
             fileset( file: 'src/main/assets/js/main.js' )
         }
     }

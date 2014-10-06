@@ -33,6 +33,8 @@ import javax.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.Range;
+import org.hibernate.validator.constraints.SafeHtml;
+import org.hibernate.validator.constraints.SafeHtml.WhiteListType;
 
 @Entity
 @Table( name = "beers" )
@@ -46,6 +48,7 @@ public class Beer
     @Column( length = 255, nullable = false )
     @NotBlank
     @Length( min = 3, max = 255 )
+    @SafeHtml( whitelistType = WhiteListType.NONE, message = "Unauthorized html elements in 'name' property" )
     private String name;
 
     @Column( nullable = false )
@@ -55,6 +58,7 @@ public class Beer
 
     @Column( length = 16384, nullable = true )
     @Length( max = 16384 )
+    @SafeHtml( whitelistType = WhiteListType.BASIC, message = "Unauthorized html elements in 'description' property" )
     private String description;
 
     @ManyToOne( optional = false )

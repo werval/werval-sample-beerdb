@@ -73,6 +73,7 @@ dependencies {
 
     runtime "org.qiweb:org.qiweb.server.bootstrap:$qiwebVersion"
     runtime 'ch.qos.logback:logback-classic:1.1.2'
+    runtime 'org.jsoup:jsoup:1.8.1'
     runtime "org.glassfish:javax.el:3.0.0"
     runtime "com.h2database:h2:1.4.178"
     runtime "org.postgresql:postgresql:9.3-1101-jdbc41"

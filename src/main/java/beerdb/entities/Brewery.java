@@ -35,6 +35,8 @@ import javax.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.Range;
+import org.hibernate.validator.constraints.SafeHtml;
+import org.hibernate.validator.constraints.SafeHtml.WhiteListType;
 import org.hibernate.validator.constraints.URL;
 
 @Entity
@@ -49,6 +51,7 @@ public class Brewery
     @Column( length = 255, nullable = false )
     @NotBlank
     @Length( min = 3, max = 255 )
+    @SafeHtml( whitelistType = WhiteListType.NONE, message = "Unauthorized html elements in 'name' property" )
     private String name;
 
     @Column
@@ -64,6 +67,7 @@ public class Brewery
 
     @Column( length = 16384, nullable = true )
     @Length( max = 16384 )
+    @SafeHtml( whitelistType = WhiteListType.BASIC, message = "Unauthorized html elements in 'description' property" )
     private String description;
 
     @Column( name = "beers_count", nullable = false )

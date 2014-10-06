@@ -136,6 +136,17 @@ public class APITest
             body( containsString( "URL" ) ).
             when().
             post( "/api/breweries" );
+
+        // Malicious HTML input
+        given().
+            contentType( APPLICATION_JSON ).
+            body( "{ \"name\":\"Zeng<a>Brewery\", \"url\":\"http://zeng-beers.com/\", \"description\":\"<script>alert('powned');</script>\" }" ).
+            expect().
+            statusCode( 400 ).
+            body( containsString( "name" ) ).
+            body( containsString( "description" ) ).
+            when().
+            post( "/api/breweries" );
     }
 
     @Test
@@ -206,6 +217,17 @@ public class APITest
             expect().
             statusCode( 400 ).
             body( containsString( "abv" ) ).
+            when().
+            post( "/api/beers" );
+
+        // Malicious HTML input
+        given().
+            contentType( APPLICATION_JSON ).
+            body( "{ \"brewery_id\": " + breweryId + ", \"name\":\"Zeng<a>Beer\", \"abv\": 101, \"description\":\"<script>alert('powned');</script>\" }" ).
+            expect().
+            statusCode( 400 ).
+            body( containsString( "name" ) ).
+            body( containsString( "description" ) ).
             when().
             post( "/api/beers" );
     }

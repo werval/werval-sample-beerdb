@@ -34,11 +34,16 @@ public class UI
     public Outcome app()
     {
         Map<String, Object> context = fromMap( new LinkedHashMap<String, Object>() )
-            .put( "css", reverseRoutes().get( Classpath.class, c -> c.resource( "assets/", "css/main.css" ) ).httpUrl() )
-            .put( "js", reverseRoutes().get( Classpath.class, c -> c.resource( "assets/", "js/main.js" ) ).httpUrl() )
+            .put( "css", reverseRoutes().get( UI.class, c -> c.assets( "css/main.css" ) ).httpUrl() )
+            .put( "js", reverseRoutes().get( UI.class, c -> c.assets( "js/main.js" ) ).httpUrl() )
             .toMap();
         Template template = plugin( Templates.class ).named( "index.html" );
         String body = template.render( context );
         return outcomes().ok().asHtml().withBody( body ).build();
+    }
+
+    public Outcome assets( String path )
+    {
+        return new Classpath().resource( "assets/", path );
     }
 }

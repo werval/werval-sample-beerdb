@@ -31,7 +31,6 @@ import org.qiweb.filters.Cached;
 import org.qiweb.modules.jpa.JPA;
 import org.qiweb.modules.json.JsonPluginException;
 
-import static org.qiweb.api.context.CurrentContext.mimeTypes;
 import static org.qiweb.api.context.CurrentContext.outcomes;
 import static org.qiweb.api.context.CurrentContext.plugin;
 import static org.qiweb.api.context.CurrentContext.request;
@@ -48,8 +47,10 @@ public class API
     public Outcome index()
         throws JsonProcessingException
     {
-        // TODO Add hyperlinks to all endpoints
-        return outcomes().ok( "{}" ).as( mimeTypes().withCharsetOfTextual( APPLICATION_JSON ) ).build();
+        ObjectNode root = json().newObject();
+        root.put( "breweries", reverseRoutes().get( API.class, c -> c.breweries( 0, "name", "asc" ) ).httpUrl() );
+        root.put( "beers", reverseRoutes().get( API.class, c -> c.beers( 0, "name", "asc" ) ).httpUrl() );
+        return outcomes().ok( json().toJSON( root ) ).asJson().build();
     }
 
     //
@@ -74,7 +75,7 @@ public class API
             .setMaxResults( PAGE_SIZE )
             .getResultList();
         byte[] json = json().toJSON( new Page<>( total, page, PAGE_SIZE, breweries ), Json.BreweryListView.class );
-        return outcomes().ok( json ).as( mimeTypes().withCharsetOfTextual( APPLICATION_JSON ) ).build();
+        return outcomes().ok( json ).asJson().build();
     }
 
     public Outcome createBrewery()
@@ -103,12 +104,11 @@ public class API
 
             String breweryRoute = reverseRoutes().get( API.class, c -> c.brewery( brewery.getId() ) ).httpUrl();
             byte[] json = json().toJSON( brewery, Json.BreweryListView.class );
-            return outcomes().
-                created().
-                withHeader( LOCATION, breweryRoute ).
-                as( mimeTypes().withCharsetOfTextual( APPLICATION_JSON ) ).
-                withBody( json ).
-                build();
+            return outcomes().created()
+                .withHeader( LOCATION, breweryRoute )
+                .asJson()
+                .withBody( json )
+                .build();
         }
         catch( ConstraintViolationException ex )
         {
@@ -126,7 +126,7 @@ public class API
             return notFound( "Brewery" );
         }
         byte[] json = json().toJSON( brewery, Json.BreweryDetailView.class );
-        return outcomes().ok( json ).as( mimeTypes().withCharsetOfTextual( APPLICATION_JSON ) ).build();
+        return outcomes().ok( json ).asJson().build();
     }
 
     public Outcome updateBrewery( Long id )
@@ -171,7 +171,7 @@ public class API
         {
             return outcomes().conflict()
                 .withBody( "Does not have zero beers." )
-                .as( mimeTypes().withCharsetOfTextual( APPLICATION_JSON ) )
+                .asJson()
                 .build();
         }
         em.remove( brewery );
@@ -201,7 +201,7 @@ public class API
             .setMaxResults( PAGE_SIZE )
             .getResultList();
         byte[] json = json().toJSON( new Page<>( total, page, PAGE_SIZE, beers ), Json.BeerListView.class );
-        return outcomes().ok( json ).as( mimeTypes().withCharsetOfTextual( APPLICATION_JSON ) ).build();
+        return outcomes().ok( json ).asJson().build();
     }
 
     public Outcome createBeer()
@@ -242,12 +242,11 @@ public class API
             em.getTransaction().commit();
             String beerRoute = reverseRoutes().get( API.class, c -> c.beer( beer.getId() ) ).httpUrl();
             byte[] json = json().toJSON( beer, Json.BeerListView.class );
-            return outcomes().
-                created().
-                withHeader( LOCATION, beerRoute ).
-                as( mimeTypes().withCharsetOfTextual( APPLICATION_JSON ) ).
-                withBody( json ).
-                build();
+            return outcomes().created()
+                .withHeader( LOCATION, beerRoute )
+                .asJson()
+                .withBody( json )
+                .build();
         }
         catch( ConstraintViolationException ex )
         {
@@ -265,7 +264,7 @@ public class API
             return notFound( "Beer" );
         }
         byte[] json = json().toJSON( beer, Json.BeerDetailView.class );
-        return outcomes().ok( json ).as( mimeTypes().withCharsetOfTextual( APPLICATION_JSON ) ).build();
+        return outcomes().ok( json ).asJson().build();
     }
 
     public Outcome updateBeer( Long id )
@@ -319,7 +318,7 @@ public class API
     {
         return outcomes().notFound()
             .withBody( errorBody( what + " not found" ) )
-            .as( mimeTypes().withCharsetOfTextual( APPLICATION_JSON ) )
+            .asJson()
             .build();
     }
 
@@ -328,7 +327,7 @@ public class API
     {
         return outcomes().badRequest()
             .withBody( errorBody( messages ) )
-            .as( mimeTypes().withCharsetOfTextual( APPLICATION_JSON ) )
+            .asJson()
             .build();
     }
 

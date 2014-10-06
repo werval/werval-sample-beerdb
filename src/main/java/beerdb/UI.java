@@ -18,7 +18,6 @@ package beerdb;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import org.qiweb.api.outcomes.Outcome;
-import org.qiweb.api.templates.Template;
 import org.qiweb.api.templates.Templates;
 import org.qiweb.controllers.Classpath;
 import org.qiweb.filters.ContentSecurityPolicy;
@@ -43,9 +42,10 @@ public class UI
             .put( "css", reverseRoutes().get( UI.class, c -> c.assets( "css/main.css" ) ).httpUrl() )
             .put( "js", reverseRoutes().get( UI.class, c -> c.assets( "js/main.js" ) ).httpUrl() )
             .toMap();
-        Template template = plugin( Templates.class ).named( "index.html" );
-        String body = template.render( context );
-        return outcomes().ok().asHtml().withBody( body ).build();
+        return outcomes().ok()
+            .asHtml()
+            .withBody( plugin( Templates.class ).named( "index.html" ).render( context ) )
+            .build();
     }
 
     public Outcome assets( String path )

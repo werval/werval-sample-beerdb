@@ -49,8 +49,8 @@ public class API
         throws JsonProcessingException
     {
         ObjectNode root = json().newObject();
-        root.put( "breweries", reverseRoutes().get( API.class, c -> c.breweries( 0, "name", "asc" ) ).httpUrl() );
-        root.put( "beers", reverseRoutes().get( API.class, c -> c.beers( 0, "name", "asc" ) ).httpUrl() );
+        root.put( "breweries", reverseRoutes().get( API.class, c -> c.breweries( 1, "name", "asc" ) ).httpUrl() );
+        root.put( "beers", reverseRoutes().get( API.class, c -> c.beers( 1, "name", "asc" ) ).httpUrl() );
         return outcomes().ok( json().toJSON( root ) ).asJson().build();
     }
 

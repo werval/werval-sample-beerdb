@@ -15,7 +15,9 @@
  */
 package beerdb.entities;
 
-import beerdb.Json;
+import beerdb.Json.BeerDetailView;
+import beerdb.Json.BeerListView;
+import beerdb.Json.BreweryDetailView;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -40,63 +42,50 @@ public class Beer
     @Id
     @GeneratedValue( strategy = GenerationType.IDENTITY )
     private Long id;
+
     @Column( length = 255, nullable = false )
     @NotBlank
     @Length( min = 3, max = 255 )
     private String name;
+
     @Column( nullable = false )
     @NotNull
     @Range( min = 0, max = 100 )
     private Float abv;
+
     @Column( length = 16384, nullable = true )
     @Length( max = 16384 )
     private String description;
+
     @ManyToOne( optional = false )
     @JoinColumn( name = "brewery_id", nullable = false )
     /* package */ Brewery brewery;
 
-    @JsonView(
-         {
-            Json.BeerListView.class, Json.BeerDetailView.class,
-            Json.BreweryDetailView.class
-        } )
+    @JsonView( { BeerListView.class, BeerDetailView.class, BreweryDetailView.class } )
     public Long getId()
     {
         return id;
     }
 
-    @JsonView(
-         {
-            Json.BeerListView.class, Json.BeerDetailView.class,
-            Json.BreweryDetailView.class
-        } )
+    @JsonView( { BeerListView.class, BeerDetailView.class, BreweryDetailView.class } )
     public String getName()
     {
         return name;
     }
 
-    @JsonView(
-         {
-            Json.BeerDetailView.class,
-        } )
+    @JsonView( BeerDetailView.class )
     public Float getAbv()
     {
         return abv;
     }
 
-    @JsonView(
-         {
-            Json.BeerDetailView.class,
-        } )
+    @JsonView( BeerDetailView.class )
     public String getDescription()
     {
         return description;
     }
 
-    @JsonView(
-         {
-            Json.BeerListView.class, Json.BeerDetailView.class
-        } )
+    @JsonView( { BeerListView.class, BeerDetailView.class } )
     public Brewery getBrewery()
     {
         return brewery;

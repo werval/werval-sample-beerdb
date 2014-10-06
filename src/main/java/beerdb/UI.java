@@ -21,6 +21,8 @@ import org.qiweb.api.outcomes.Outcome;
 import org.qiweb.api.templates.Template;
 import org.qiweb.api.templates.Templates;
 import org.qiweb.controllers.Classpath;
+import org.qiweb.filters.XFrameOptions;
+import org.qiweb.filters.XXSSProtection;
 import org.qiweb.filters.XContentTypeOptions;
 
 import static org.qiweb.api.context.CurrentContext.outcomes;
@@ -31,6 +33,8 @@ import static org.qiweb.util.Maps.fromMap;
 @XContentTypeOptions
 public class UI
 {
+    @XFrameOptions
+    @XXSSProtection
     public Outcome app()
     {
         Map<String, Object> context = fromMap( new LinkedHashMap<String, Object>() )

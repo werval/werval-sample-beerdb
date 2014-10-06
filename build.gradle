@@ -1,6 +1,5 @@
 
 description = "QiWeb Sample - Beer Database"
-def qiwebVersion = '0'
 
 //
 //     __             

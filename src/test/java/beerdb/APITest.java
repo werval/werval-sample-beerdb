@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013 the original author or authors
+ * Copyright (c) 2013-2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,6 +26,7 @@ import static org.hamcrest.Matchers.endsWith;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.core.Is.is;
 import static org.qiweb.api.http.Headers.Names.LOCATION;
 import static org.qiweb.api.mime.MimeTypesNames.APPLICATION_JSON;
 import static org.qiweb.api.mime.MimeTypesNames.TEXT_PLAIN;
@@ -135,6 +136,17 @@ public class APITest
             body( containsString( "URL" ) ).
             when().
             post( "/api/breweries" );
+
+        // Malicious HTML input
+        given().
+            contentType( APPLICATION_JSON ).
+            body( "{ \"name\":\"Zeng<a>Brewery\", \"url\":\"http://zeng-beers.com/\", \"description\":\"\\uFE64script\\uFE65alert('powned');\\uFE64/script\\uFE65\" }" ).
+            expect().
+            statusCode( 400 ).
+            body( containsString( "name" ) ).
+            body( containsString( "description" ) ).
+            when().
+            post( "/api/breweries" );
     }
 
     @Test
@@ -207,6 +219,17 @@ public class APITest
             body( containsString( "abv" ) ).
             when().
             post( "/api/beers" );
+
+        // Malicious HTML input
+        given().
+            contentType( APPLICATION_JSON ).
+            body( "{ \"brewery_id\": " + breweryId + ", \"name\":\"Zeng<a>Beer\", \"abv\": 101, \"description\":\"\\uFE64script\\uFE65alert('powned');\\uFE64/script\\uFE65\" }" ).
+            expect().
+            statusCode( 400 ).
+            body( containsString( "name" ) ).
+            body( containsString( "description" ) ).
+            when().
+            post( "/api/beers" );
     }
 
     @Test
@@ -232,8 +255,9 @@ public class APITest
         expect().
             statusCode( 200 ).
             contentType( APPLICATION_JSON ).
-            body( "", hasSize( 3 ) ).
-            body( "name", hasItems( "ZengBrewery" ) ).
+            body( "total", is( 3 ) ).
+            body( "list", hasSize( 3 ) ).
+            body( "list.name", hasItems( "ZengBrewery" ) ).
             when().
             get( "/api/breweries" );
 
@@ -245,7 +269,8 @@ public class APITest
         expect().
             statusCode( 200 ).
             contentType( APPLICATION_JSON ).
-            body( "breweries", hasSize( 2 ) ).
+            body( "total", is( 2 ) ).
+            body( "list", hasSize( 2 ) ).
             when().
             get( "/api/breweries" );
     }

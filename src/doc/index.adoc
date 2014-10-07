@@ -1,0 +1,24 @@
+= Beer Database
+
+Inspired by the Open Beer Database, pretty different though.
+
+HTTP JSON api written in Java.
+
+Data is persisted thanks to JPA (Tested with H2 and PostgreSQL).
+
+AngularJS client, built using bower and grunt.
+
+The app is built using Gradle, including automatic grunt rebuild in dev mode.
+
+The sample include integration tests of the HTTP api and functional tests of the AngularJS UI.
+
+And much more.
+
+
+== Walkthrough tutorial
+
+- Live instance[http://qiweb-beerdb.herokuapp.com/]
+- Architecture overview
+- Run your instance in dev mode
+- The tutorial begins ...
+

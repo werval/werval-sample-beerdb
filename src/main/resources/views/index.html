@@ -6,7 +6,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
         <link href="@css" rel="stylesheet" media="screen">
     </head>
-    <body ng-app="BeerDB">
+    <body ng-app="BeerDB" ng-csp>
 
         <nav class="navbar navbar-default" role="navigation" ng-controller="NavBarCtrl">
             <div class="navbar-header">
@@ -49,24 +49,25 @@
                                 <a title="Add Brewery" href="#/breweries/new" class="add-button" data-toggle="tooltip" data-placement="left"><i></i></a>
                             </span>
                             Breweries
-                            <small ng-bind-template="{{breweries.length}} and counting"></small>
+                            <small ng-bind-template="{{total}} total"></small>
                         </h2>
                     </div>
 
-                    <form class="inline-form">
-                        <div class="form-group">
-                            <label class="sr-only" for="search">Search</label>
-                            <input type="search" class="form-control input-sm" id="search" placeholder="Type to search breweries" ng-model="query">
-                        </div>
-                    </form>
-
                     <div class="list-group">
-                        <a href="#/breweries/{{brewery.id}}" class="list-group-item" ng-repeat="brewery in breweries | filter:query">
+                        <a href="#/breweries/{{brewery.id}}" class="list-group-item" ng-repeat="brewery in breweries">
                             <span class="pull-right badge">{{brewery.beers_count}} beers</span>
                             <img class="brewery-icon" src="/assets/images/barrels.png"/>
                             <h4 class="list-group-item-heading">{{brewery.name}}</h4>
-                            <p class="list-group-item-text"><small style="color: lightgray">Brewing since</small> {{brewery.since}}</p>
+                            <p class="list-group-item-text"><small class="faded">Brewing since</small> {{brewery.since}}</p>
                         </a>
+                    </div>
+
+                    <div class="pagination-container" ng-show="total > page_size">
+                        <ul class="pagination">
+                            <li ng-class="{disabled: page==1}"><a href="#/breweries?page=1">&laquo;</a></li>
+                            <li ng-repeat="p in pages" ng-class="{active: page==p}"><a href="#/breweries?page={{p}}">{{p}}</a></li>
+                            <li ng-class="{disabled: page==total_pages}"><a href="#/breweries?page={{total_pages}}">&raquo;</a></li>
+                        </ul>
                     </div>
 
                     <!--
@@ -101,7 +102,7 @@
                         </div>
                         <div class="form-group">
                             <button type="submit" class="save-button"><i></i> Save Brewery</button>
-                            <button class="cancel-button" ng-click="cancelForm()" ><i></i> Cancel</a>
+                            <button class="cancel-button" ng-click="cancelForm()"><i></i> Cancel</button>
                         </div>
                     </form>
 
@@ -130,21 +131,14 @@
                 <p><a href="{{brewery.url}}" target="_blank"><i class="glyphicon glyphicon-new-window"></i> {{brewery.url}}</a></p>
 
                 <h3>
-                    Beers
+                    Beers <span class="faded">{{brewery.beers.length}}</span>
                     <span class="pull-right">
                         <a href="#/beers/new?brewery_id={{brewery.id}}" class="add-button btn-sm" data-toggle="tooltip" title="Add Beer" data-placement="left"><i></i></a>
                     </span>
                 </h3>
 
-                <form class="inline-form">
-                    <div class="form-group">
-                        <label class="sr-only" for="search">Search</label>
-                        <input type="search" class="form-control input-sm" id="search" placeholder="Type to search beers" ng-model="query">
-                    </div>
-                </form>
-
                 <div class="list-group">
-                    <a href="#/beers/{{beer.id}}" class="list-group-item" ng-repeat="beer in brewery.beers | filter:query">
+                    <a href="#/beers/{{beer.id}}" class="list-group-item" ng-repeat="beer in brewery.beers">
                         <span class="pull-right label label-danger">Red</span>
                         <img class="beer-icon" src="/assets/images/beer.png"/>
                         <h4 class="list-group-item-heading">{{beer.name}}</h4>
@@ -163,27 +157,29 @@
 
                     <div class="page-header">
                         <h2>
-                            Beers
                             <span class="pull-right">
                                 <a href="#/beers/new" class="add-button" data-toggle="tooltip" title="Add Beer" data-placement="left"><i></i></a>
                             </span>
+                            Beers
+                            <small ng-bind-template="{{total}} total"></small>
                         </h2>
                     </div>
 
-                    <form class="inline-form">
-                        <div class="form-group">
-                            <label class="sr-only" for="search">Search</label>
-                            <input type="search" class="form-control input-sm" id="search" placeholder="Type to search beers" ng-model="query">
-                        </div>
-                    </form>
-
                     <div class="list-group">
-                        <a href="#/beers/{{beer.id}}" class="list-group-item" ng-repeat="beer in beers | filter:query">
+                        <a href="#/beers/{{beer.id}}" class="list-group-item" ng-repeat="beer in beers">
                             <span class="pull-right label label-danger">Red</span>
                             <img class="beer-icon" src="/assets/images/beer.png"/>
                             <h4 class="list-group-item-heading">{{beer.name}}</h4>
-                            <p class="list-group-item-text"> <small style="color: lightgray">Brewed by</small> {{beer.brewery.name}}</p>
+                            <p class="list-group-item-text"> <small class="faded">Brewed by</small> {{beer.brewery.name}}</p>
                         </a>
+                    </div>
+
+                    <div class="pagination-container" ng-show="total > page_size">
+                        <ul class="pagination">
+                            <li ng-class="{disabled: page==1}"><a href="#/beers?page=1">&laquo;</a></li>
+                            <li ng-repeat="p in pages" ng-class="{active: page==p}"><a href="#/beers?page={{p}}">{{p}}</a></li>
+                            <li ng-class="{disabled: page==total_pages}"><a href="#/beers?page={{total_pages}}">&raquo;</a></li>
+                        </ul>
                     </div>
 
                     <!--

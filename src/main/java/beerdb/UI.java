@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 the original author or authors
+ * Copyright (c) 2013-2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,25 +15,41 @@
  */
 package beerdb;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
-import org.qiweb.api.controllers.ClasspathResources;
 import org.qiweb.api.outcomes.Outcome;
-import org.rythmengine.RythmEngine;
+import org.qiweb.api.templates.Templates;
+import org.qiweb.controllers.Classpath;
+import org.qiweb.filters.ContentSecurityPolicy;
+import org.qiweb.filters.XFrameOptions;
+import org.qiweb.filters.XXSSProtection;
+import org.qiweb.filters.XContentTypeOptions;
 
-import static org.qiweb.api.context.CurrentContext.application;
 import static org.qiweb.api.context.CurrentContext.outcomes;
+import static org.qiweb.api.context.CurrentContext.plugin;
 import static org.qiweb.api.context.CurrentContext.reverseRoutes;
-import static org.qiweb.api.mime.MimeTypesNames.TEXT_HTML;
+import static org.qiweb.util.Maps.fromMap;
 
+@XContentTypeOptions
 public class UI
 {
+    @ContentSecurityPolicy
+    @XFrameOptions
+    @XXSSProtection
     public Outcome app()
     {
-        Map<String, Object> params = new HashMap<>();
-        params.put( "css", reverseRoutes().get( ClasspathResources.class, c -> c.resource( "assets/", "css/main.css" ) ).httpUrl() );
-        params.put( "js", reverseRoutes().get( ClasspathResources.class, c -> c.resource( "assets/", "js/main.js" ) ).httpUrl() );
-        String body = application().plugin( RythmEngine.class ).render( "index.html", params );
-        return outcomes().ok().as( TEXT_HTML ).withBody( body ).build();
+        Map<String, Object> context = fromMap( new LinkedHashMap<String, Object>() )
+            .put( "css", reverseRoutes().get( UI.class, c -> c.assets( "css/main.css" ) ).httpUrl() )
+            .put( "js", reverseRoutes().get( UI.class, c -> c.assets( "js/main.js" ) ).httpUrl() )
+            .toMap();
+        return outcomes().ok()
+            .asHtml()
+            .withBody( plugin( Templates.class ).named( "index.html" ).render( context ) )
+            .build();
+    }
+
+    public Outcome assets( String path )
+    {
+        return new Classpath().resource( "assets/", path );
     }
 }

@@ -1,87 +1,88 @@
+
+description = "QiWeb Sample - Beer Database"
+
+//
+//     __             
+//  __|  |___ _ _ ___ 
+// |  |  | .'| | | .'|
+// |_____|__,|\_/|__,|
+// ____________________________________________________________________________
+//
+
+apply plugin: 'java'
+apply plugin: 'idea'
+sourceCompatibility = '1.8'
+targetCompatibility = '1.8'
+[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+
+
+//
+//  _____                 _ _           _
+// | __  |___ ___ ___ ___|_| |_ ___ ___|_|___ ___
+// |    -| -_| . | . |_ -| |  _| . |  _| | -_|_ -|
+// |__|__|___|  _|___|___|_|_| |___|_| |_|___|___|
+//           |_|
+// ____________________________________________________________________________
+//
+
 buildscript {
-    repositories {
-        // maven { url qiwebLocalRepository }
-        maven { url "https://repo.codeartisans.org/qiweb"; credentials { username = "qiweb"; password = "qiweb" } }
+	repositories {
+        maven { url qiwebLocalRepository }
+    	maven {
+    		url "https://repo.codeartisans.org/qiweb"
+    		credentials { username = "qiweb"; password = "qiweb" }
+		}
         mavenCentral()
-    }
-    dependencies {
-        classpath 'org.qiweb:org.qiweb.gradle:0.2.0.Alpha'
-        classpath 'de.obqo.gradle:gradle-lesscss-plugin:1.0-1.3.3'
-    }
+	}
 }
 repositories {
-    // maven { url qiwebLocalRepository }
-    maven { url "https://repo.codeartisans.org/qiweb"; credentials { username = "qiweb"; password = "qiweb" } }
+    maven { url qiwebLocalRepository }
+    maven {
+    	url "https://repo.codeartisans.org/qiweb"
+    	credentials { username = "qiweb"; password = "qiweb" }
+	}
     mavenCentral()
 }
 
-apply plugin: 'java'
-apply plugin: 'qiweb'
-apply plugin: 'application'
 
-task stage(dependsOn: ['clean', 'installApp'])
+//
+//  ____                    _             _
+// |    \ ___ ___ ___ ___ _| |___ ___ ___|_|___ ___
+// |  |  | -_| . | -_|   | . | -_|   |  _| | -_|_ -|
+// |____/|___|  _|___|_|_|___|___|_|_|___|_|___|___|
+//           |_|
+// ____________________________________________________________________________
+//
 
 configurations {
     assets
 }
-
-qiweb {
-    extraWatch += [ "src/main/assets" ]
-}
-
-applicationName = 'beerdb'
-mainClassName = 'org.qiweb.server.bootstrap.Main'
-applicationDistribution.from( "src/main/resources" ) {
-    include "*.conf"
-    into "etc"
-}
-startScripts {
-    defaultJvmOpts = [ "-server", "-Xmx128m" ]
-}
-tasks.startScripts {
-    doLast {
-        def scriptShellFile = file "${outputDir}/${applicationName}"
-        def scriptBatchFile = file "${outputDir}/${applicationName}.bat"
-        scriptShellFile.text = scriptShellFile.text.replace( 'CLASSPATH=$APP_HOME/lib',
-                                                             'CLASSPATH=$APP_HOME/etc/:$APP_HOME/lib')
-        scriptBatchFile.text = scriptBatchFile.text.replace( 'CLASSPATH=%APP_HOME%\\lib',
-                                                             'CLASSPATH=%APP_HOME%\\etc\\;%APP_HOME%\\lib' )
-    }
-}
-
-artifacts {
-    archives distZip
-}
-
 dependencies {
 
-    assets "org.webjars:angularjs:1.2.13"
+    assets "org.webjars:angularjs:1.2.25"
     assets "org.webjars:bootstrap:3.0.3"
-    assets "org.webjars:jquery:2.1.0-2"
-    assets "org.webjars:marked:0.2.10"
+    assets "org.webjars:jquery:2.1.1"
+    assets "org.webjars:marked:0.3.2-1"
 
-    compile "org.qiweb:org.qiweb.api:0.2.0.Alpha"
-    compile "org.qiweb:org.qiweb.modules.jndi:0.2.0.Alpha"
-    compile "org.qiweb:org.qiweb.modules.jpa:0.2.0.Alpha"
-    compile "org.qiweb:org.qiweb.modules.rythm:0.2.0.Alpha"
+    compile "org.qiweb:org.qiweb.api:$qiwebVersion"
+    compile "org.qiweb:org.qiweb.modules.liquibase:$qiwebVersion"
+    compile "org.qiweb:org.qiweb.modules.jpa:$qiwebVersion"
+    compile "org.qiweb:org.qiweb.modules.json:$qiwebVersion"
+    compile "org.qiweb:org.qiweb.modules.rythm:$qiwebVersion"
     compile "org.hibernate:hibernate-validator:5.0.3.Final"
-    compile "com.fasterxml.jackson.core:jackson-databind:2.3.3"
-    compile "com.fasterxml.jackson.core:jackson-annotations:2.3.3"
-    compile "org.liquibase:liquibase-core:3.1.1"
-    compile "com.ninja-squad:DbSetup:1.2.0"
-    compile 'javax.transaction:transaction-api:1.1'
 
-    runtime "org.qiweb:org.qiweb.server.bootstrap:0.2.0.Alpha"
+    runtime "org.qiweb:org.qiweb.server.bootstrap:$qiwebVersion"
     runtime 'ch.qos.logback:logback-classic:1.1.2'
+    runtime 'org.jsoup:jsoup:1.8.1'
     runtime "org.glassfish:javax.el:3.0.0"
-    runtime "com.h2database:h2:1.4.177"
+    runtime "com.h2database:h2:1.4.178"
     runtime "org.postgresql:postgresql:9.3-1101-jdbc41"
 
-    testCompile "org.qiweb:org.qiweb.test:0.2.0.Alpha"
-    testCompile "com.jayway.restassured:rest-assured:2.3.1"
+    testCompile "org.qiweb:org.qiweb.test:$qiwebVersion"
+    testCompile "com.jayway.restassured:rest-assured:2.3.3"
     testCompile "commons-logging:commons-logging:1.1.3"
-    testCompile "org.fluentlenium:fluentlenium-festassert:0.9.2"
-    testCompile "org.seleniumhq.selenium:selenium-java:2.41.0"
+    testCompile "org.fluentlenium:fluentlenium-festassert:0.10.2"
+    testCompile "org.seleniumhq.selenium:selenium-java:2.43.1"
 
 }
 
@@ -112,12 +113,12 @@ task concatJs( dependsOn: extractWebJars ) {
     outputs.file 'build/assets/js/main.js'
     doLast {
         ant.concat( destfile: 'build/assets/js/main.js' ) {
-            fileset( file: 'build/webjars/marked/0.2.10/marked.js' )
-            fileset( file: 'build/webjars/jquery/2.1.0/jquery.js' )
+            fileset( file: 'build/webjars/marked/0.3.2/marked.js' )
+            fileset( file: 'build/webjars/jquery/2.1.1/jquery.js' )
             fileset( file: 'build/webjars/bootstrap/3.0.3/js/bootstrap.js' )
-            fileset( file: 'build/webjars/angularjs/1.2.13/angular.js' )
-            fileset( file: 'build/webjars/angularjs/1.2.13/angular-route.js' )
-            fileset( file: 'build/webjars/angularjs/1.2.13/angular-sanitize.js' )
+            fileset( file: 'build/webjars/angularjs/1.2.25/angular.js' )
+            fileset( file: 'build/webjars/angularjs/1.2.25/angular-route.js' )
+            fileset( file: 'build/webjars/angularjs/1.2.25/angular-sanitize.js' )
             fileset( file: 'src/main/assets/js/main.js' )
         }
     }
@@ -128,6 +129,7 @@ task prepareLessFiles( type: Copy, dependsOn: extractWebJars ) {
     into 'build/less'
 }
 
+buildscript { dependencies { classpath 'de.obqo.gradle:gradle-lesscss-plugin:1.0-1.3.3' } }
 apply plugin: 'lesscss'
 lesscss {
     source = fileTree( 'build/less' ) {
@@ -140,7 +142,7 @@ task optimizeCss( type: de.obqo.gradle.lesscss.LessTask, dependsOn: prepareLessF
 
 task copyFonts( type: Copy, dependsOn: extractWebJars ) {
     from 'build/webjars/bootstrap/3.0.3/fonts'
-    into 'build/generated-src/assets/resources/assets/fonts'
+    into 'build/assets/fonts'
 }
 
 task copyAssets( type: Copy, dependsOn: [ concatJs, optimizeCss, copyFonts ] ) {
@@ -150,3 +152,141 @@ task copyAssets( type: Copy, dependsOn: [ concatJs, optimizeCss, copyFonts ] ) {
 
 processResources.dependsOn copyAssets
 sourceSets.main.resources.srcDir file( "build/generated-src/assets/resources" )
+
+
+//
+//  _____ _ _ _ _     _
+// |     |_| | | |___| |_
+// |  |  | | | | | -_| . |
+// |__  _|_|_____|___|___|
+//    |__|
+// ____________________________________________________________________________
+//
+
+buildscript { dependencies { classpath "org.qiweb:org.qiweb.gradle:$qiwebVersion" } }
+apply plugin: 'qiweb'
+devshell {
+    extraWatch += [ "src/main/assets", "src/main/web" ]
+}
+
+
+//
+//  ____                            _       _   _
+// |    \ ___ ___ _ _ _____ ___ ___| |_ ___| |_|_|___ ___
+// |  |  | . |  _| | |     | -_|   |  _| .'|  _| | . |   |
+// |____/|___|___|___|_|_|_|___|_|_|_| |__,|_| |_|___|_|_|
+//
+
+buildscript {
+    repositories {
+        maven { url 'http://dl.bintray.com/content/aalmiray/asciidoctor' }
+        maven { url 'http://jcenter.bintray.com' }
+    }
+    dependencies {
+        classpath 'org.asciidoctor:asciidoctor-gradle-plugin:0.7.0'
+    }
+}
+apply plugin: 'asciidoctor'
+asciidoctor {
+    inputs.dir file( 'src/doc' )
+    sourceDir = file( 'src/doc' )
+    outputDir = file( 'build/docs/asciidoctor' )
+    backend = 'html5'
+    options = [
+        compact: true,
+        attributes: [
+            'qiweb-version': version,
+            'beerdb-version': version,
+            'toc2': ''
+        ]
+    ]
+    logDocuments = true
+}
+
+
+//  _____         _           _
+// |  _  |___ ___| |_ ___ ___|_|___ ___
+// |   __| .'|  _| '_| .'| . | |   | . |
+// |__|  |__,|___|_,_|__,|_  |_|_|_|_  |
+//                       |___|     |___|
+// ____________________________________________________________________________
+//
+
+apply plugin: 'application'
+applicationName = 'beerdb'
+mainClassName = 'org.qiweb.server.bootstrap.Main'
+applicationDistribution.from( "src/main/resources" ) {
+    include "*.conf"
+    into "etc"
+}
+startScripts {
+    defaultJvmOpts = [ "-server", "-Xmx128m" ]
+}
+tasks.startScripts {
+    doLast {
+        def scriptShellFile = file "${outputDir}/${applicationName}"
+        def scriptBatchFile = file "${outputDir}/${applicationName}.bat"
+        scriptShellFile.text = scriptShellFile.text.replace( 'CLASSPATH=$APP_HOME/lib',
+                                                             'CLASSPATH=$APP_HOME/etc/:$APP_HOME/lib')
+        scriptBatchFile.text = scriptBatchFile.text.replace( 'CLASSPATH=%APP_HOME%\\lib',
+                                                             'CLASSPATH=%APP_HOME%\\etc\\;%APP_HOME%\\lib' )
+    }
+}
+artifacts {
+    archives distZip
+}
+
+
+//
+//  _____             _          ____          _                       _
+// |  |  |___ ___ ___| |_ _ _   |    \ ___ ___| |___ _ _ _____ ___ ___| |_
+// |     | -_|  _| . | '_| | |  |  |  | -_| . | | . | | |     | -_|   |  _|
+// |__|__|___|_| |___|_,_|___|  |____/|___|  _|_|___|_  |_|_|_|___|_|_|_|
+//                                        |_|       |___|
+// ____________________________________________________________________________
+//
+
+task stage(dependsOn: ['clean', 'installApp'])
+
+
+//
+//  ____                            _       _   _
+// |    \ ___ ___ _ _ _____ ___ ___| |_ ___| |_|_|___ ___
+// |  |  | . |  _| | |     | -_|   |  _| .'|  _| | . |   |
+// |____/|___|___|___|_|_|_|___|_|_|_| |__,|_| |_|___|_|_|
+//
+/// ____________________________________________________________________________
+
+buildscript {
+    repositories {
+        maven { url 'http://dl.bintray.com/content/aalmiray/asciidoctor' }
+        maven { url 'http://jcenter.bintray.com' }
+    }
+    dependencies { classpath 'org.asciidoctor:asciidoctor-gradle-plugin:0.7.0' }
+}
+// Generate documentation resources using Asciidoctor
+apply plugin: 'asciidoctor'
+asciidoctor {
+    baseDir = file( 'src/doc' )
+    sourceDir = file( 'src/doc' )
+    outputDir = file( 'build/docs/asciidoc' )
+    backend = 'html5'
+    logDocuments = true
+    options = [
+        compact: true,
+        attributes: [
+            'toc': 'right',
+            'linkattrs': '',
+            'linkcss':'',
+            'source-highlighter': 'coderay', 'coderay-css': 'class',
+            'qiweb-version': version
+        ]
+    ]
+    doLast {
+        copy {
+            from 'src/doc'
+            into 'build/docs/asciidoc'
+            excludes += [ '**/*.asciidoc', '**/*.adoc', '**/*.asc', '**/*.ad' ]
+        }
+    }
+}

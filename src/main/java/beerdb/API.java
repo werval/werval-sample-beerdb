@@ -17,45 +17,41 @@ package beerdb;
 
 import beerdb.entities.Beer;
 import beerdb.entities.Brewery;
+import beerdb.values.Page;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.io.IOException;
 import java.util.List;
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
 import javax.validation.ConstraintViolationException;
 import org.qiweb.api.outcomes.Outcome;
+import org.qiweb.filters.AcceptContentTypes;
+import org.qiweb.filters.XContentTypeOptions;
 import org.qiweb.modules.jpa.JPA;
+import org.qiweb.modules.json.JsonPluginException;
 
-import static org.qiweb.api.context.CurrentContext.application;
 import static org.qiweb.api.context.CurrentContext.outcomes;
+import static org.qiweb.api.context.CurrentContext.plugin;
 import static org.qiweb.api.context.CurrentContext.request;
 import static org.qiweb.api.context.CurrentContext.reverseRoutes;
 import static org.qiweb.api.http.Headers.Names.LOCATION;
 import static org.qiweb.api.mime.MimeTypesNames.APPLICATION_JSON;
+import static org.qiweb.modules.json.JSON.json;
 
-// TODO SECURITY Filter inputs
-// TODO SECURITY Escape outputs
-// See http://stefanhendriks.wordpress.com/2011/02/16/prevent-cross-site-scripting-when-using-json-objects-using-esapi-and-jackson-framework-1-7-x/
+@XContentTypeOptions
 public class API
 {
-    private final EntityManagerFactory emf;
-    private final ObjectMapper mapper;
-
-    public API()
-    {
-        this.emf = application().plugin( JPA.class ).emf();
-        this.mapper = application().metaData().get( ObjectMapper.class, "mapper" );
-    }
+    private final int PAGE_SIZE = 8;
 
     public Outcome index()
         throws JsonProcessingException
     {
-        // TODO Add hyperlinks to all endpoints
-        return outcomes().ok( "{}" ).as( APPLICATION_JSON ).build();
+        ObjectNode root = json().newObject();
+        root.put( "breweries", reverseRoutes().get( API.class, c -> c.breweries( 1, "name", "asc" ) ).httpUrl() );
+        root.put( "beers", reverseRoutes().get( API.class, c -> c.beers( 1, "name", "asc" ) ).httpUrl() );
+        return outcomes().ok( json().toJSON( root ) ).asJson().build();
     }
 
     //
@@ -65,103 +61,87 @@ public class API
     // |_____|_| |___|_____|___|_| |_|___|___|
     // _________________________________________________________________________________________________________________
     //
-    public Outcome breweries()
+    public Outcome breweries( Integer page, String sortBy, String order )
         throws JsonProcessingException
     {
-        EntityManager em = emf.createEntityManager();
-        try
+        if( page < 1 )
         {
-            List<Brewery> breweries = em.createQuery( "select b from Brewery b", Brewery.class ).getResultList();
-            byte[] json = mapper.writerWithView( Json.BreweryListView.class ).writeValueAsBytes( breweries );
-            return outcomes().ok( json ).as( APPLICATION_JSON ).build();
+            page = 1;
         }
-        finally
-        {
-            em.close();
-        }
+        EntityManager em = plugin( JPA.class ).em();
+        Long total = em.createQuery( "select count(b) from Brewery b", Long.class ).getSingleResult();
+        List<Brewery> breweries = em.createQuery(
+            "select b from Brewery b order by b." + sortBy + " " + order, Brewery.class )
+            .setFirstResult( ( page - 1 ) * PAGE_SIZE )
+            .setMaxResults( PAGE_SIZE )
+            .getResultList();
+        byte[] json = json().toJSON( new Page<>( total, page, PAGE_SIZE, breweries ), Json.BreweryListView.class );
+        return outcomes().ok( json ).asJson().build();
     }
 
+    @AcceptContentTypes( APPLICATION_JSON )
     public Outcome createBrewery()
         throws IOException
     {
-        if( !APPLICATION_JSON.equals( request().contentType() ) )
-        {
-            return badRequest( "Unacceptable content-type:" + request().contentType() );
-        }
         byte[] body = request().body().asBytes();
         Brewery brewery;
         try
         {
-            brewery = mapper.readValue( body, Brewery.class );
+            brewery = json().fromJSON( Brewery.class, body );
         }
-        catch( JsonProcessingException ex )
+        catch( JsonPluginException ex )
         {
             return badRequest( ex.getMessage() );
         }
-        EntityManager em = emf.createEntityManager();
         try
         {
+            EntityManager em = plugin( JPA.class ).em();
             em.getTransaction().begin();
             em.persist( brewery );
             em.getTransaction().commit();
 
             String breweryRoute = reverseRoutes().get( API.class, c -> c.brewery( brewery.getId() ) ).httpUrl();
-            byte[] json = mapper.writerWithView( Json.BreweryListView.class ).writeValueAsBytes( brewery );
-            return outcomes().
-                created().
-                withHeader( LOCATION, breweryRoute ).
-                as( APPLICATION_JSON ).
-                withBody( json ).
-                build();
+            byte[] json = json().toJSON( brewery, Json.BreweryListView.class );
+            return outcomes().created()
+                .withHeader( LOCATION, breweryRoute )
+                .asJson()
+                .withBody( json )
+                .build();
         }
         catch( ConstraintViolationException ex )
         {
             return badRequest( ex.getConstraintViolations().toString() );
-        }
-        finally
-        {
-            em.close();
         }
     }
 
     public Outcome brewery( Long id )
         throws JsonProcessingException
     {
-        EntityManager em = emf.createEntityManager();
-        try
+        EntityManager em = plugin( JPA.class ).em();
+        Brewery brewery = em.find( Brewery.class, id );
+        if( brewery == null )
         {
-            Brewery brewery = em.find( Brewery.class, id );
-            if( brewery == null )
-            {
-                return notFound( "Brewery" );
-            }
-            byte[] json = mapper.writerWithView( Json.BreweryDetailView.class ).writeValueAsBytes( brewery );
-            return outcomes().ok( json ).as( APPLICATION_JSON ).build();
+            return notFound( "Brewery" );
         }
-        finally
-        {
-            em.close();
-        }
+        byte[] json = json().toJSON( brewery, Json.BreweryDetailView.class );
+        return outcomes().ok( json ).asJson().build();
     }
 
+    @AcceptContentTypes( APPLICATION_JSON )
     public Outcome updateBrewery( Long id )
         throws IOException
     {
-        if( !APPLICATION_JSON.equals( request().contentType() ) )
-        {
-            return badRequest( "Unacceptable content-type:" + request().contentType() );
-        }
         byte[] body = request().body().asBytes();
-        EntityManager em = emf.createEntityManager();
         try
         {
+            EntityManager em = plugin( JPA.class ).em();
             em.getTransaction().begin();
             Brewery brewery = em.find( Brewery.class, id );
             if( brewery == null )
             {
                 return notFound( "Brewery" );
             }
-            mapper.readerForUpdating( brewery ).readValue( body );
+            json().updateFromJSON( brewery, body );
             em.persist( brewery );
             em.getTransaction().commit();
             return outcomes().ok().build();
@@ -170,36 +150,28 @@ public class API
         {
             return badRequest( ex.getConstraintViolations().toString() );
         }
-        finally
-        {
-            em.close();
-        }
     }
 
     public Outcome deleteBrewery( Long id )
         throws JsonProcessingException
     {
-        EntityManager em = emf.createEntityManager();
-        try
+        EntityManager em = plugin( JPA.class ).em();
+        em.getTransaction().begin();
+        Brewery brewery = em.find( Brewery.class, id );
+        if( brewery == null )
         {
-            em.getTransaction().begin();
-            Brewery brewery = em.find( Brewery.class, id );
-            if( brewery == null )
-            {
-                return notFound( "Brewery" );
-            }
-            if( brewery.getBeersCount() > 0 )
-            {
-                return outcomes().conflict().withBody( "Does not have zero beers." ).as( APPLICATION_JSON ).build();
-            }
-            em.remove( brewery );
-            em.getTransaction().commit();
-            return outcomes().ok().build();
+            return notFound( "Brewery" );
         }
-        finally
+        if( brewery.getBeersCount() > 0 )
         {
-            em.close();
+            return outcomes().conflict()
+                .withBody( "Does not have zero beers." )
+                .asJson()
+                .build();
         }
+        em.remove( brewery );
+        em.getTransaction().commit();
+        return outcomes().ok().build();
     }
 
     //
@@ -209,31 +181,30 @@ public class API
     // |_____|___|___|_| |___|
     // _________________________________________________________________________________________________________________
     //
-    public Outcome beers()
+    public Outcome beers( Integer page, String sortBy, String order )
         throws JsonProcessingException
     {
-        EntityManager em = emf.createEntityManager();
-        try
+        if( page < 1 )
         {
-            List<Beer> beers = em.createQuery( "select b from Beer b", Beer.class ).getResultList();
-            byte[] json = mapper.writerWithView( Json.BeerListView.class ).writeValueAsBytes( beers );
-            return outcomes().ok( json ).as( APPLICATION_JSON ).build();
+            page = 1;
         }
-        finally
-        {
-            em.close();
-        }
+        EntityManager em = plugin( JPA.class ).em();
+        Long total = em.createQuery( "select count(b) from Beer b", Long.class ).getSingleResult();
+        List<Beer> beers = em.createQuery(
+            "select b from Beer b order by b." + sortBy + " " + order, Beer.class )
+            .setFirstResult( ( page - 1 ) * PAGE_SIZE )
+            .setMaxResults( PAGE_SIZE )
+            .getResultList();
+        byte[] json = json().toJSON( new Page<>( total, page, PAGE_SIZE, beers ), Json.BeerListView.class );
+        return outcomes().ok( json ).asJson().build();
     }
 
+    @AcceptContentTypes( APPLICATION_JSON )
     public Outcome createBeer()
         throws IOException
     {
-        if( !APPLICATION_JSON.equals( request().contentType() ) )
-        {
-            return badRequest( "Unacceptable content-type:" + request().contentType() );
-        }
         byte[] body = request().body().asBytes();
-        JsonNode bodyNode = mapper.readTree( body );
+        JsonNode bodyNode = json().fromJSON( body );
         if( !bodyNode.hasNonNull( "brewery_id" ) )
         {
             return badRequest( "Missing brewery_id" );
@@ -242,15 +213,15 @@ public class API
         Beer beer;
         try
         {
-            beer = mapper.treeToValue( bodyNode, Beer.class );
+            beer = json().fromNode( Beer.class, bodyNode );
         }
-        catch( JsonProcessingException ex )
+        catch( JsonPluginException ex )
         {
             return badRequest( ex.getMessage() );
         }
-        EntityManager em = emf.createEntityManager();
         try
         {
+            EntityManager em = plugin( JPA.class ).em();
             em.getTransaction().begin();
             Brewery brewery = em.find( Brewery.class, breweryId );
             if( brewery == null )
@@ -262,62 +233,47 @@ public class API
             em.persist( brewery );
             em.getTransaction().commit();
             String beerRoute = reverseRoutes().get( API.class, c -> c.beer( beer.getId() ) ).httpUrl();
-            byte[] json = mapper.writerWithView( Json.BeerListView.class ).writeValueAsBytes( beer );
-            return outcomes().
-                created().
-                withHeader( LOCATION, beerRoute ).
-                as( APPLICATION_JSON ).
-                withBody( json ).
-                build();
+            byte[] json = json().toJSON( beer, Json.BeerListView.class );
+            return outcomes().created()
+                .withHeader( LOCATION, beerRoute )
+                .asJson()
+                .withBody( json )
+                .build();
         }
         catch( ConstraintViolationException ex )
         {
             return badRequest( ex.getConstraintViolations().toString() );
-        }
-        finally
-        {
-            em.close();
         }
     }
 
     public Outcome beer( Long id )
         throws JsonProcessingException
     {
-        EntityManager em = emf.createEntityManager();
-        try
+        EntityManager em = plugin( JPA.class ).em();
+        Beer beer = em.find( Beer.class, id );
+        if( beer == null )
         {
-            Beer beer = em.find( Beer.class, id );
-            if( beer == null )
-            {
-                return notFound( "Beer" );
-            }
-            byte[] json = mapper.writerWithView( Json.BeerDetailView.class ).writeValueAsBytes( beer );
-            return outcomes().ok( json ).as( APPLICATION_JSON ).build();
+            return notFound( "Beer" );
         }
-        finally
-        {
-            em.close();
-        }
+        byte[] json = json().toJSON( beer, Json.BeerDetailView.class );
+        return outcomes().ok( json ).asJson().build();
     }
 
+    @AcceptContentTypes( APPLICATION_JSON )
     public Outcome updateBeer( Long id )
         throws IOException
     {
-        if( !APPLICATION_JSON.equals( request().contentType() ) )
-        {
-            return badRequest( "Unacceptable content-type:" + request().contentType() );
-        }
         byte[] body = request().body().asBytes();
-        EntityManager em = emf.createEntityManager();
         try
         {
+            EntityManager em = plugin( JPA.class ).em();
             em.getTransaction().begin();
             Beer beer = em.find( Beer.class, id );
             if( beer == null )
             {
                 return notFound( "Beer" );
             }
-            mapper.readerForUpdating( beer ).readValue( body );
+            json().updateFromJSON( beer, body );
             em.persist( beer );
             em.getTransaction().commit();
             return outcomes().ok().build();
@@ -326,58 +282,53 @@ public class API
         {
             return badRequest( ex.getConstraintViolations().toString() );
         }
-        finally
-        {
-            em.close();
-        }
     }
 
     public Outcome deleteBeer( Long id )
         throws JsonProcessingException
     {
-        EntityManager em = emf.createEntityManager();
-        try
+        EntityManager em = plugin( JPA.class ).em();
+        em.getTransaction().begin();
+        Beer beer = em.find( Beer.class, id );
+        if( beer == null )
         {
-            em.getTransaction().begin();
-            Beer beer = em.find( Beer.class, id );
-            if( beer == null )
-            {
-                return notFound( "Beer" );
-            }
-            Brewery brewery = beer.getBrewery();
-            brewery.removeBeer( beer );
-            em.remove( beer );
-            em.persist( brewery );
-            em.getTransaction().commit();
-            return outcomes().ok().build();
+            return notFound( "Beer" );
         }
-        finally
-        {
-            em.close();
-        }
+        Brewery brewery = beer.getBrewery();
+        brewery.removeBeer( beer );
+        em.remove( beer );
+        em.persist( brewery );
+        em.getTransaction().commit();
+        return outcomes().ok().build();
     }
 
     private Outcome notFound( String what )
         throws JsonProcessingException
     {
-        return outcomes().notFound().withBody( errorBody( what + " not found" ) ).as( APPLICATION_JSON ).build();
+        return outcomes().notFound()
+            .withBody( errorBody( what + " not found" ) )
+            .asJson()
+            .build();
     }
 
     private Outcome badRequest( String... messages )
         throws JsonProcessingException
     {
-        return outcomes().badRequest().withBody( errorBody( messages ) ).as( APPLICATION_JSON ).build();
+        return outcomes().badRequest()
+            .withBody( errorBody( messages ) )
+            .asJson()
+            .build();
     }
 
     private byte[] errorBody( String... messages )
         throws JsonProcessingException
     {
-        ObjectNode root = mapper.createObjectNode();
+        ObjectNode root = json().newObject();
         ArrayNode errors = root.putArray( "errors" );
         for( String message : messages )
         {
             errors.add( message );
         }
-        return mapper.writeValueAsBytes( root );
+        return json().toJSON( root );
     }
 }

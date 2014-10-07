@@ -1,5 +1,5 @@
-/**
- * Copyright (c) 2013 the original author or authors
+/*
+ * Copyright (c) 2013-2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,11 +18,10 @@ package beerdb.ui;
 import org.fluentlenium.core.FluentPage;
 import org.fluentlenium.core.domain.FluentWebElement;
 import org.openqa.selenium.WebDriver;
-import org.qiweb.api.util.Strings;
 
 import static org.fest.assertions.Assertions.assertThat;
 import static org.fest.assertions.fluentlenium.FluentLeniumAssertions.assertThat;
-import static org.qiweb.api.exceptions.IllegalArguments.ensureNotEmpty;
+import static org.qiweb.util.IllegalArguments.ensureNotEmpty;
 
 /**
  * Breweries Page Object.
@@ -61,16 +60,6 @@ public class BreweriesPage
     public long listCount()
     {
         return find( ".list-group a" ).size();
-    }
-
-    public void fillFilterForm( String filter )
-    {
-        fill( "#search" ).with( filter );
-    }
-
-    public void clearFilterForm()
-    {
-        fill( "#search" ).with( Strings.EMPTY );
     }
 
     public BreweryPage clickBrewery( int index )

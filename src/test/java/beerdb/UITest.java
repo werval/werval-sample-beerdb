@@ -1,5 +1,5 @@
-/**
- * Copyright (c) 2013 the original author or authors
+/*
+ * Copyright (c) 2013-2014 the original author or authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,7 +30,6 @@ import org.junit.Test;
 import org.qiweb.test.QiWebHttpRule;
 
 import static org.fest.assertions.Assertions.assertThat;
-import static org.fest.assertions.fluentlenium.FluentLeniumAssertions.assertThat;
 
 public class UITest
     extends FluentTest
@@ -67,37 +66,37 @@ public class UITest
         // Start from Breweries
         //
         goTo( "/" );
-        assertThat( breweriesPage ).isAt();
+        await().untilPage( breweriesPage );
         assertThat( breweriesPage.totalCount() ).isEqualTo( 2 );
         assertThat( breweriesPage.listCount() ).isEqualTo( 2 );
 
         // Click on first brewery and take a look at it
         //
         goTo( breweriesPage );
-        assertThat( breweriesPage ).isAt();
+        await().untilPage( breweriesPage );
         breweryPage = breweriesPage.clickBrewery( 0 );
-        assertThat( breweryPage ).isAt();
+        await().untilPage( breweryPage );
 
         // Click on first beer and take a look at it
         //
         beerPage = breweryPage.clickBeer( 0 );
-        assertThat( beerPage ).isAt();
+        await().untilPage( beerPage );
 
         // Navigate to breweries and click create brewery button, then cancel
         //
         goTo( breweriesPage );
-        assertThat( breweriesPage ).isAt();
+        await().untilPage( breweriesPage );
         createBreweryPage = breweriesPage.createBrewery();
-        assertThat( createBreweryPage ).isAt();
+        await().untilPage( createBreweryPage );
         createBreweryPage.cancel();
-        assertThat( breweriesPage ).isAt();
+        await().untilPage( breweriesPage );
 
         // Click create brewery button, then click save without filling the form
         //
         createBreweryPage = breweriesPage.createBrewery();
-        assertThat( createBreweryPage ).isAt();
+        await().untilPage( createBreweryPage );
         createBreweryPage.save();
-        assertThat( createBreweryPage ).isAt();
+        await().untilPage( createBreweryPage );
 
         // Fill create brewery form and click save button
         //
@@ -109,23 +108,23 @@ public class UITest
         // Take a look at the newly created brewery
         //
         breweryPage = new BreweryPage( getDriver(), getDriver().getCurrentUrl() );
-        assertThat( breweryPage ).isAt();
+        await().untilPage( breweryPage );
         assertThat( breweryPage.breweryName() ).isEqualTo( "Test Brewery" );
 
         // Click edit brewery button then cancel
         //
         editBreweryPage = breweryPage.edit();
-        assertThat( editBreweryPage ).isAt();
+        await().untilPage( editBreweryPage );
         editBreweryPage.cancel();
-        assertThat( breweryPage ).isAt();
+        await().untilPage( breweryPage );
 
         // Click edit brewery button, clear url, try to save
         //
         editBreweryPage = breweryPage.edit();
-        assertThat( editBreweryPage ).isAt();
+        await().untilPage( editBreweryPage );
         editBreweryPage.clearUrl();
         editBreweryPage.save();
-        assertThat( editBreweryPage ).isAt();
+        await().untilPage( editBreweryPage );
 
         // Put url back, change name, then save
         //
@@ -136,57 +135,60 @@ public class UITest
         // Take a look at the edited brewery
         //
         goTo( breweryPage );
-        assertThat( breweryPage ).isAt();
+        await().untilPage( breweryPage );
         assertThat( breweryPage.breweryName() ).isEqualTo( "Test EDITED Brewery" );
 
         // Navigate to breweries to see the newly created brewery in the list
         //
         goTo( breweriesPage );
-        assertThat( breweriesPage ).isAt();
+        await().untilPage( breweriesPage );
+        assertThat( breweriesPage.totalCount() ).isEqualTo( 3 );
         assertThat( breweriesPage.listCount() ).isEqualTo( 3 );
 
         // Navigate to the newly created brewery and click delete button
         //
         goTo( breweryPage );
-        assertThat( breweryPage ).isAt();
+        await().untilPage( breweryPage );
         breweryPage.delete();
 
         // Navigate to breweries to see that the newly created brewery was removed from the list
         //
         goTo( breweriesPage );
-        assertThat( breweriesPage ).isAt();
+        await().untilPage( breweriesPage );
+        assertThat( breweriesPage.totalCount() ).isEqualTo( 2 );
         assertThat( breweriesPage.listCount() ).isEqualTo( 2 );
 
         // Navigate to beers
         //
         goTo( beersPage );
-        assertThat( beersPage ).isAt();
-        assertThat( beersPage.listCount() ).isEqualTo( 11 );
+        await().untilPage( beersPage );
+        assertThat( beersPage.totalCount() ).isEqualTo( 11 );
+        assertThat( beersPage.listCount() ).isEqualTo( 8 );
 
         // Click on first beer and take a look at it
         //
         beerPage = beersPage.clickBeer( 0 );
-        assertThat( beerPage ).isAt();
+        await().untilPage( beerPage );
 
         // Click on the beer's brewery and take a look at it
         //
         breweryPage = beerPage.navigateToBrewery();
-        assertThat( breweryPage ).isAt();
+        await().untilPage( breweryPage );
 
         // Navigate to beers and click create beer button, then cancel
         //
         goTo( beersPage );
-        assertThat( beersPage ).isAt();
+        await().untilPage( beersPage );
         createBeerPage = beersPage.createBeer();
         createBeerPage.cancel();
-        assertThat( beersPage ).isAt();
+        await().untilPage( beersPage );
 
         // Click create beer button, then click save without filling the form
         //
         createBeerPage = beersPage.createBeer();
-        assertThat( createBeerPage ).isAt();
+        await().untilPage( createBeerPage );
         createBeerPage.save();
-        assertThat( createBeerPage ).isAt();
+        await().untilPage( createBeerPage );
 
         // Fill create beer form and click save button
         //
@@ -199,23 +201,23 @@ public class UITest
         // Take a look at the newly created beer
         //
         beerPage = new BeerPage( getDriver(), getDriver().getCurrentUrl() );
-        assertThat( beerPage ).isAt();
+        await().untilPage( beerPage );
         assertThat( beerPage.beerName() ).isEqualTo( "Jeanlain Bière de Bourrin" );
 
         // Click edit beer button then cancel
         //
         editBeerPage = beerPage.edit();
-        assertThat( editBeerPage ).isAt();
+        await().untilPage( editBeerPage );
         editBeerPage.cancel();
-        assertThat( beerPage ).isAt();
+        await().untilPage( beerPage );
 
         // Click edit beer button, clear abv, try to save
         //
         editBeerPage = beerPage.edit();
-        assertThat( editBeerPage ).isAt();
+        await().untilPage( editBeerPage );
         editBeerPage.clearAbv();
         editBeerPage.save();
-        assertThat( editBeerPage ).isAt();
+        await().untilPage( editBeerPage );
 
         // Put abv back, change name, then save
         //
@@ -226,25 +228,27 @@ public class UITest
         // Take a look at the edited brewery
         //
         goTo( beerPage );
-        assertThat( beerPage ).isAt();
+        await().untilPage( beerPage );
         assertThat( beerPage.beerName() ).isEqualTo( "Test EDITED Beer" );
 
         // Navigate to beers to see the newly created beer in the list
         //
         goTo( beersPage );
-        assertThat( beersPage ).isAt();
-        assertThat( beersPage.listCount() ).isEqualTo( 12 );
+        await().untilPage( beersPage );
+        assertThat( beersPage.totalCount() ).isEqualTo( 12 );
+        assertThat( beersPage.listCount() ).isEqualTo( 8 );
 
         // Navigate to the newly created beer and click delete button
         //
         goTo( beerPage );
-        assertThat( beerPage ).isAt();
+        await().untilPage( beerPage );
         beerPage.delete();
 
         // Navigate to beers to see that the newly created beer was removed from the list
         //
         goTo( beersPage );
-        assertThat( beersPage ).isAt();
-        assertThat( beersPage.listCount() ).isEqualTo( 11 );
+        await().untilPage( beersPage );
+        assertThat( beersPage.totalCount() ).isEqualTo( 11 );
+        assertThat( beersPage.listCount() ).isEqualTo( 8 );
     }
 }

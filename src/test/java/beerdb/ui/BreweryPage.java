@@ -47,8 +47,12 @@ public class BreweryPage
     @Override
     public void isAt()
     {
+        // Navigation highlight
         assertThat( findFirst( "ul.navbar-nav li" ).getAttribute( "class" ) ).isEqualTo( "active" );
+        // Brewery loaded
         assertThat( findFirst( "#brewery" ) ).isNotNull();
+        // Associated beers loaded
+        assertThat( findFirst( "h3 span.faded" ).getText() ).isNotEmpty();
     }
 
     public BeerPage clickBeer( int index )

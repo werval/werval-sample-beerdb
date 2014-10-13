@@ -110,9 +110,9 @@ task extractWebJars( type: Copy ) {
 task concatJs( dependsOn: extractWebJars ) {
     inputs.dir 'src/main/assets/js'
     inputs.dir 'build/webjars'
-    outputs.file 'build/assets/js/main.js'
+    outputs.dir 'build/concatJs'
     doLast {
-        ant.concat( destfile: 'build/assets/js/main.js' ) {
+        ant.concat( destfile: 'build/concatJs/js/main.js' ) {
             fileset( file: 'build/webjars/marked/0.3.2/marked.js' )
             fileset( file: 'build/webjars/jquery/2.1.1/jquery.js' )
             fileset( file: 'build/webjars/bootstrap/3.0.3/js/bootstrap.js' )
@@ -135,18 +135,20 @@ lesscss {
     source = fileTree( 'build/less' ) {
         include 'main.less'
     }
-    dest = 'build/assets/css'
+    dest = 'build/css/css'
     compress = true
 }
 task optimizeCss( type: de.obqo.gradle.lesscss.LessTask, dependsOn: prepareLessFiles ) { }
 
 task copyFonts( type: Copy, dependsOn: extractWebJars ) {
     from 'build/webjars/bootstrap/3.0.3/fonts'
-    into 'build/assets/fonts'
+    into 'build/fonts/fonts'
 }
 
 task copyAssets( type: Copy, dependsOn: [ concatJs, optimizeCss, copyFonts ] ) {
-    from 'build/assets'
+    from 'build/concatJs'
+    from 'build/css'
+    from 'build/fonts'
     into 'build/generated-src/assets/resources/assets'
 }
 

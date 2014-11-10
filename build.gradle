@@ -28,19 +28,13 @@ targetCompatibility = '1.8'
 buildscript {
 	repositories {
         maven { url qiwebLocalRepository }
-    	maven {
-    		url "https://repo.codeartisans.org/qiweb"
-    		credentials { username = "qiweb"; password = "qiweb" }
-		}
+    	maven { url "https://repo.codeartisans.org/qiweb" }
         mavenCentral()
 	}
 }
 repositories {
     maven { url qiwebLocalRepository }
-    maven {
-    	url "https://repo.codeartisans.org/qiweb"
-    	credentials { username = "qiweb"; password = "qiweb" }
-	}
+    maven { url "https://repo.codeartisans.org/qiweb" }
     mavenCentral()
 }
 

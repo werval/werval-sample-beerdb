@@ -33,7 +33,7 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 
 import static org.fest.assertions.Assertions.assertThat;
 
-public class UITest
+public class BrowserUiTest
     extends FluentTest
 {
     @ClassRule

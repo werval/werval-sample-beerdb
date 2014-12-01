@@ -32,9 +32,9 @@ import static org.qiweb.api.mime.MimeTypesNames.APPLICATION_JSON;
 import static org.qiweb.api.mime.MimeTypesNames.TEXT_PLAIN;
 
 /**
- * Assert API Behaviour.
+ * Assert HTTP API Behaviour.
  */
-public class APITest
+public class HttpApiTest
     extends QiWebHttpTest
 {
     @Test

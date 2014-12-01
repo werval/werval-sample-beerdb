@@ -157,25 +157,27 @@ devshell.extraWatch += [ "src/main/assets", "src/main/web" ]
 asciidoctor {
     baseDir = file( 'src/doc' )
     sourceDir = file( 'src/doc' )
-    outputDir = file( 'build/docs/asciidoc' )
+    outputDir = file( 'build/generated-src/asciidoc/resources/beerdb/doc' )
     backends = [ 'html5' ]
     logDocuments = true
     separateOutputDirs = false
     options = [
-        compact: true,
-        attributes: [
-            'toc': 'right',
-            'linkattrs': '',
-            'linkcss':'',
-            'source-highlighter': 'coderay', 'coderay-css': 'class',
-            'qiweb-version': version
-        ]
+        compact: true
+    ]
+    attributes = [
+        'toc': 'right',
+        'linkattrs': '',
+        'linkcss':'',
+        'source-highlighter': 'coderay', 'coderay-css': 'class',
+        'qiweb-version': qiwebVersion
     ]
     doLast {
         copy {
             from 'src/doc'
-            into 'build/docs/asciidoc'
+            into 'build/generated-src/asciidoc/resources/beerdb/doc'
             excludes += [ '**/*.asciidoc', '**/*.adoc', '**/*.asc', '**/*.ad' ]
         }
     }
 }
+processResources.dependsOn asciidoctor
+sourceSets.main.resources.srcDir file( "build/generated-src/asciidoc/resources" )

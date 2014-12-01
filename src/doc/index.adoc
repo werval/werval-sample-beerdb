@@ -1,5 +1,7 @@
 = Beer Database
 
+Based on QiWeb `{qiweb-version}`.
+
 Inspired by the Open Beer Database, pretty different though.
 
 HTTP JSON api written in Java.
@@ -17,8 +19,7 @@ And much more.
 
 == Walkthrough tutorial
 
-- Live instance[http://qiweb-beerdb.herokuapp.com/]
+- http://qiweb-beerdb.herokuapp.com/[Live instance]
 - Architecture overview
 - Run your instance in dev mode
 - The tutorial begins ...
-

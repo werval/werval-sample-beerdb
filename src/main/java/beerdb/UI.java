@@ -50,6 +50,6 @@ public class UI
 
     public Outcome assets( String path )
     {
-        return new Classpath().resource( "assets/", path );
+        return new Classpath().resource( "assets", path );
     }
 }

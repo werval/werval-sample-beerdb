@@ -68,9 +68,7 @@ public class BrowserUiTest
         // Start from Breweries
         //
         goTo( "/" );
-        withDefaultSearchWait( 10, SECONDS );
-        withDefaultPageWait( 10, SECONDS );
-        await().untilPage( breweriesPage ).isAt();
+        await().atMost( 20, SECONDS ).untilPage( breweriesPage ).isAt();
         assertThat( breweriesPage.totalCount() ).isEqualTo( 2 );
         assertThat( breweriesPage.listCount() ).isEqualTo( 2 );
 

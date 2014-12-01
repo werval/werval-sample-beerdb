@@ -52,7 +52,9 @@ public class BreweryPage
         // Brewery loaded
         assertThat( findFirst( "#brewery" ) ).isNotNull();
         // Associated beers loaded
-        assertThat( findFirst( "h3 span.faded" ).getText() ).isNotEmpty();
+        String beersCount = findFirst( "h3 span.faded" ).getText();
+        assertThat( beersCount ).isNotEmpty();
+        assertThat( find( ".list-group a" ).size() ).isEqualTo( Integer.valueOf( beersCount ) );
     }
 
     public BeerPage clickBeer( int index )

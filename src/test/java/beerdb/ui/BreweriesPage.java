@@ -47,8 +47,14 @@ public class BreweriesPage
     @Override
     public void isAt()
     {
+        // Navigation highlight
         assertThat( findFirst( "ul.navbar-nav li" ).getAttribute( "class" ) ).isEqualTo( "active" );
         assertThat( findFirst( "#breweries" ) ).isNotNull();
+        // Breweries loaded
+        String breweriesCountText = findFirst( ".page-header h2 small" ).getText().trim();
+        assertThat( breweriesCountText ).isNotEmpty();
+        assertThat(breweriesCountText.split(" ").length).isEqualTo( 2 );
+        assertThat( find( ".list-group a" ).size() ).isEqualTo( Integer.valueOf( breweriesCountText.substring( 0, breweriesCountText.indexOf ( ' ' ) ) ) );
     }
 
     public long totalCount()

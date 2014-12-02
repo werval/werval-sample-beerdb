@@ -11,7 +11,7 @@ description = "QiWeb Sample - Beer Database"
 
 buildscript { 
     repositories {
-        if( qiwebLocalRepository ) maven { url qiwebLocalRepository }
+        if( hasProperty( 'qiwebLocalRepository' ) ) maven { url qiwebLocalRepository }
         maven { url "https://repo.codeartisans.org/qiweb" }
         jcenter()
     }

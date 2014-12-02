@@ -159,7 +159,6 @@ asciidoctor {
     sourceDir = file( 'src/doc' )
     outputDir = file( 'build/generated-src/asciidoc/resources/beerdb/doc' )
     backends = [ 'html5' ]
-    logDocuments = true
     separateOutputDirs = false
     options = [
         compact: true
@@ -181,3 +180,15 @@ asciidoctor {
 }
 processResources.dependsOn asciidoctor
 sourceSets.main.resources.srcDir file( "build/generated-src/asciidoc/resources" )
+
+
+//
+//  ______              __                 __              
+// |   __ \.---.-.----.|  |--.---.-.-----.|__|.-----.-----.
+// |    __/|  _  |  __||    <|  _  |  _  ||  ||     |  _  |
+// |___|   |___._|____||__|__|___._|___  ||__||__|__|___  |
+//                                 |_____|          |_____|
+// ____________________________________________________________________________
+//
+
+applicationName = 'beerdb'

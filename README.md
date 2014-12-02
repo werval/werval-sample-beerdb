@@ -3,6 +3,14 @@
 This sample is backed by an [EclipseLink][1] [JPA 2][2] store for breweries
 and beers. It expose a [JSON][3] api consumed by an [AngularJS][4] front-end.
 
+To run in development mode: `gradle devshell`
+
+To run in production mode: `gradle start`
+
+To run tests: `gradle check`
+
+To build a production distribution: `gradle distZip`
+
 In development and test modes, the JPA 2 store is an in-memory [H2][5]
 database. A production configuration that use [PostgreSQL][6] is provided.
 

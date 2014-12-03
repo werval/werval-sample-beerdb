@@ -11,6 +11,8 @@ To run tests: `gradle check`
 
 To build a production distribution: `gradle distZip`
 
+To see all available tasks: `gradle tasks`
+
 In development and test modes, the JPA 2 store is an in-memory [H2][5]
 database. A production configuration that use [PostgreSQL][6] is provided.
 

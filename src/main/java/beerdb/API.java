@@ -22,23 +22,23 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import io.werval.api.outcomes.Outcome;
+import io.werval.filters.AcceptContentTypes;
+import io.werval.filters.XContentTypeOptions;
+import io.werval.modules.jpa.JPA;
+import io.werval.modules.json.JsonPluginException;
 import java.io.IOException;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.validation.ConstraintViolationException;
-import org.qiweb.api.outcomes.Outcome;
-import org.qiweb.filters.AcceptContentTypes;
-import org.qiweb.filters.XContentTypeOptions;
-import org.qiweb.modules.jpa.JPA;
-import org.qiweb.modules.json.JsonPluginException;
 
-import static org.qiweb.api.context.CurrentContext.outcomes;
-import static org.qiweb.api.context.CurrentContext.plugin;
-import static org.qiweb.api.context.CurrentContext.request;
-import static org.qiweb.api.context.CurrentContext.reverseRoutes;
-import static org.qiweb.api.http.Headers.Names.LOCATION;
-import static org.qiweb.api.mime.MimeTypesNames.APPLICATION_JSON;
-import static org.qiweb.modules.json.JSON.json;
+import static io.werval.api.context.CurrentContext.outcomes;
+import static io.werval.api.context.CurrentContext.plugin;
+import static io.werval.api.context.CurrentContext.request;
+import static io.werval.api.context.CurrentContext.reverseRoutes;
+import static io.werval.api.http.Headers.Names.LOCATION;
+import static io.werval.api.mime.MimeTypesNames.APPLICATION_JSON;
+import static io.werval.modules.json.JSON.json;
 
 @XContentTypeOptions
 public class API

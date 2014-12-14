@@ -15,7 +15,7 @@
  */
 package beerdb;
 
-import org.qiweb.api.Application;
+import io.werval.api.Application;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,7 +23,7 @@ import org.slf4j.LoggerFactory;
  * Beer Database Global Object.
  */
 public class Global
-    extends org.qiweb.api.Global
+    extends io.werval.api.Global
 {
     private static final Logger LOG = LoggerFactory.getLogger( Global.class );
 

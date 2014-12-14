@@ -23,11 +23,11 @@ import beerdb.ui.CreateBeerPage;
 import beerdb.ui.CreateBreweryPage;
 import beerdb.ui.EditBeerPage;
 import beerdb.ui.EditBreweryPage;
+import io.werval.test.WervalHttpRule;
 import org.fluentlenium.adapter.FluentTest;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
-import org.qiweb.test.QiWebHttpRule;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
 
@@ -37,12 +37,12 @@ public class BrowserUiTest
     extends FluentTest
 {
     @ClassRule
-    public static final QiWebHttpRule QIWEB = new QiWebHttpRule();
+    public static final WervalHttpRule WERVAL = new WervalHttpRule();
 
     @Override
     public String getDefaultBaseUrl()
     {
-        return QIWEB.baseHttpUrl();
+        return WERVAL.baseHttpUrl();
     }
 
     private BreweriesPage breweriesPage;
@@ -103,7 +103,7 @@ public class BrowserUiTest
         // Fill create brewery form and click save button
         //
         createBreweryPage.fillName( "Test Brewery" );
-        createBreweryPage.fillUrl( "http://test-brewery.qiweb.org/" );
+        createBreweryPage.fillUrl( "http://test-brewery.werval.io/" );
         createBreweryPage.fillDescription( "This is Test Brewery" );
         createBreweryPage.saveAndWaitForRedirect();
 
@@ -131,7 +131,7 @@ public class BrowserUiTest
         // Put url back, change name, then save
         //
         editBreweryPage.fillName( "Test EDITED Brewery" );
-        editBreweryPage.fillUrl( "http://test-brewery.qiweb.org/" );
+        editBreweryPage.fillUrl( "http://test-brewery.werval.io/" );
         editBreweryPage.saveAndWaitForRedirect();
 
         // Take a look at the edited brewery

@@ -15,20 +15,20 @@
  */
 package beerdb;
 
+import io.werval.api.outcomes.Outcome;
+import io.werval.api.templates.Templates;
+import io.werval.controllers.Classpath;
+import io.werval.filters.ContentSecurityPolicy;
+import io.werval.filters.XFrameOptions;
+import io.werval.filters.XXSSProtection;
+import io.werval.filters.XContentTypeOptions;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import org.qiweb.api.outcomes.Outcome;
-import org.qiweb.api.templates.Templates;
-import org.qiweb.controllers.Classpath;
-import org.qiweb.filters.ContentSecurityPolicy;
-import org.qiweb.filters.XFrameOptions;
-import org.qiweb.filters.XXSSProtection;
-import org.qiweb.filters.XContentTypeOptions;
 
-import static org.qiweb.api.context.CurrentContext.outcomes;
-import static org.qiweb.api.context.CurrentContext.plugin;
-import static org.qiweb.api.context.CurrentContext.reverseRoutes;
-import static org.qiweb.util.Maps.fromMap;
+import static io.werval.api.context.CurrentContext.outcomes;
+import static io.werval.api.context.CurrentContext.plugin;
+import static io.werval.api.context.CurrentContext.reverseRoutes;
+import static io.werval.util.Maps.fromMap;
 
 @XContentTypeOptions
 public class UI

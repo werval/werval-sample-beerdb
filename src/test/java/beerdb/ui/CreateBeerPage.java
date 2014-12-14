@@ -21,9 +21,9 @@ import org.fluentlenium.core.FluentPage;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.Select;
 
+import static io.werval.util.IllegalArguments.ensureNotEmpty;
 import static org.fest.assertions.Assertions.assertThat;
 import static org.fest.assertions.fluentlenium.FluentLeniumAssertions.assertThat;
-import static org.qiweb.util.IllegalArguments.ensureNotEmpty;
 
 /**
  * Create Beer Page Object.

@@ -16,26 +16,26 @@
 package beerdb;
 
 import com.jayway.restassured.response.Response;
+import io.werval.test.WervalHttpTest;
 import org.junit.Test;
-import org.qiweb.test.QiWebHttpTest;
 
 import static com.jayway.restassured.RestAssured.expect;
 import static com.jayway.restassured.RestAssured.given;
+import static io.werval.api.http.Headers.Names.LOCATION;
+import static io.werval.api.mime.MimeTypesNames.APPLICATION_JSON;
+import static io.werval.api.mime.MimeTypesNames.TEXT_PLAIN;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.endsWith;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.core.Is.is;
-import static org.qiweb.api.http.Headers.Names.LOCATION;
-import static org.qiweb.api.mime.MimeTypesNames.APPLICATION_JSON;
-import static org.qiweb.api.mime.MimeTypesNames.TEXT_PLAIN;
 
 /**
  * Assert HTTP API Behaviour.
  */
 public class HttpApiTest
-    extends QiWebHttpTest
+    extends WervalHttpTest
 {
     @Test
     public void testIndex()

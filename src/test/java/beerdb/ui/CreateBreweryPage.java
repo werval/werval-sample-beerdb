@@ -20,9 +20,9 @@ import org.fluentlenium.core.Fluent;
 import org.fluentlenium.core.FluentPage;
 import org.openqa.selenium.WebDriver;
 
+import static io.werval.util.IllegalArguments.ensureNotEmpty;
 import static org.fest.assertions.Assertions.assertThat;
 import static org.fest.assertions.fluentlenium.FluentLeniumAssertions.assertThat;
-import static org.qiweb.util.IllegalArguments.ensureNotEmpty;
 
 /**
  * Create Brewery Page Object.

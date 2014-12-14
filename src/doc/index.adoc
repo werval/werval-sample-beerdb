@@ -1,6 +1,6 @@
 = Beer Database
 
-Based on QiWeb `{qiweb-version}`.
+Based on Werval `{werval-version}`.
 
 Inspired by the Open Beer Database, pretty different though.
 
@@ -19,7 +19,7 @@ And much more.
 
 == Walkthrough tutorial
 
-- http://qiweb-beerdb.herokuapp.com/[Live instance]
+- http://werval-beerdb.herokuapp.com/[Live instance]
 - Architecture overview
 - Run your instance in dev mode
 - The tutorial begins ...

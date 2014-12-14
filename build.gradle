@@ -1,5 +1,5 @@
 
-description = "QiWeb Sample - Beer Database"
+description = "Werval Sample - Beer Database"
 
 //  ______         __ __     __   ______ __               __              
 // |   __ \.--.--.|__|  |.--|  | |   __ \  |.--.--.-----.|__|.-----.-----.
@@ -11,19 +11,19 @@ description = "QiWeb Sample - Beer Database"
 
 buildscript { 
     repositories {
-        if( hasProperty( 'qiwebLocalRepository' ) ) maven { url qiwebLocalRepository }
-        maven { url "https://repo.codeartisans.org/qiweb" }
+        if( project.hasProperty( 'wervalLocalRepository' ) ) maven { url project.wervalLocalRepository }
+        maven { url "https://repo.codeartisans.org/werval" }
         jcenter()
     }
     dependencies {
-        classpath "org.qiweb:org.qiweb.gradle:$qiwebVersion"
+        classpath "io.werval:io.werval.gradle:$wervalVersion"
         classpath 'de.obqo.gradle:gradle-lesscss-plugin:1.0-1.3.3'
         classpath 'org.asciidoctor:asciidoctor-gradle-plugin:1.5.1'
     }
 }
 apply plugin: 'idea'
 apply plugin: 'eclipse'
-apply plugin: 'org.qiweb.application'
+apply plugin: 'io.werval.application'
 apply plugin: 'lesscss'
 apply plugin: 'org.asciidoctor.gradle.asciidoctor'
 
@@ -47,10 +47,10 @@ dependencies {
     assets "org.webjars:jquery:2.1.1"
     assets "org.webjars:marked:0.3.2-1"
 
-    compile qiweb.module( 'liquibase' )
-    compile qiweb.module( 'jpa' )
-    compile qiweb.module( 'json' )
-    compile qiweb.module( 'rythm' )
+    compile werval.module( 'liquibase' )
+    compile werval.module( 'jpa' )
+    compile werval.module( 'json' )
+    compile werval.module( 'rythm' )
     compile "org.hibernate:hibernate-validator:5.0.3.Final"
 
     runtime 'ch.qos.logback:logback-classic:1.1.2'
@@ -168,7 +168,7 @@ asciidoctor {
         'linkattrs': '',
         'linkcss':'',
         'source-highlighter': 'coderay', 'coderay-css': 'class',
-        'qiweb-version': qiwebVersion
+        'werval-version': wervalVersion
     ]
     doLast {
         copy {

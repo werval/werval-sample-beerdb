@@ -1,4 +1,4 @@
-# Beer Database - QiWeb Sample Application
+# Beer Database - Werval Sample Application
 
 This sample is backed by an [EclipseLink][1] [JPA 2][2] store for breweries
 and beers. It expose a [JSON][3] api consumed by an [AngularJS][4] front-end.
@@ -10,6 +10,8 @@ To run in production mode: `gradle start`
 To run tests: `gradle check`
 
 To build a production distribution: `gradle distZip`
+
+To see all available tasks: `gradle tasks`
 
 In development and test modes, the JPA 2 store is an in-memory [H2][5]
 database. A production configuration that use [PostgreSQL][6] is provided.
@@ -25,7 +27,7 @@ Acceptance tests against the AngularJS front-end are implemented using
 
 ![BeerDB UI Tests](beerdb-ui-tests.gif)
 
-The application is deployed live at [qiweb-beerdb.herokuapp.com](http://qiweb-beerdb.herokuapp.com).
+The application is deployed live at [werval-beerdb.herokuapp.com](http://werval-beerdb.herokuapp.com).
 
 [1]: http://www.eclipse.org/eclipselink/
 [2]: http://jcp.org/aboutJava/communityprocess/final/jsr317/

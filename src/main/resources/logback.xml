@@ -15,7 +15,7 @@
     <logger name="com.jolbox"       level="warn"/>
     <logger name="liquibase"        level="warn"/>
     <logger name="org.hibernate"    level="warn"/>
-    <logger name="org.qiweb"        level="info"/>
+    <logger name="io.werval"        level="info"/>
 
     <!--
     <logger name="liquibase" level="info"/>

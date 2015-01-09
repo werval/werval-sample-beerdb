@@ -19,8 +19,10 @@ import beerdb.Json.BeerDetailView;
 import beerdb.Json.BeerListView;
 import beerdb.Json.BreweryDetailView;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import io.werval.util.Hashid;
 import java.text.Normalizer;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -36,6 +38,8 @@ import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.Range;
 import org.hibernate.validator.constraints.SafeHtml;
 import org.hibernate.validator.constraints.SafeHtml.WhiteListType;
+
+import static io.werval.api.context.CurrentContext.crypto;
 
 @Entity
 @Table( name = "beers" )
@@ -66,10 +70,23 @@ public class Beer
     @JoinColumn( name = "brewery_id", nullable = false )
     /* package */ Brewery brewery;
 
-    @JsonView( { BeerListView.class, BeerDetailView.class, BreweryDetailView.class } )
-    public Long getId()
+    public Hashid getHashid()
     {
-        return id;
+        return crypto().hashids().encode( id );
+    }
+
+    @JsonProperty( "id" )
+    @JsonView( { BeerListView.class, BeerDetailView.class, BreweryDetailView.class } )
+    public String getHashidString()
+    {
+        return getHashid().toString();
+    }
+
+    @JsonProperty( "id" )
+    @JsonDeserialize
+    public void setHashIdString( String hashid )
+    {
+        id = crypto().hashids().decode( hashid ).singleLong();
     }
 
     @JsonView( { BeerListView.class, BeerDetailView.class, BreweryDetailView.class } )

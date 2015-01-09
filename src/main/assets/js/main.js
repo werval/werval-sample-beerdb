@@ -148,7 +148,7 @@ beerdb.controller('NewBeerCtrl', [
     '$scope', '$http', '$location', function($scope, $http, $location) {
         $scope.form_title = 'New beer';
         $scope.data = {
-            brewery_id: $location.search().brewery_id ? parseInt($location.search().brewery_id) : undefined
+            brewery_id: $location.search().brewery_id ? $location.search().brewery_id : undefined
         };
         $http.get('/api/breweries').success(function(data) {
             $scope.breweries = data.list; // FIXME Not all breweries loaded in select due to pagination!

@@ -15,8 +15,10 @@
  */
 package beerdb;
 
+import beerdb.values.Page;
 import com.jayway.restassured.response.Response;
-import io.werval.test.WervalHttpTest;
+import io.werval.test.WervalHttpRule;
+import org.junit.ClassRule;
 import org.junit.Test;
 
 import static com.jayway.restassured.RestAssured.expect;
@@ -35,8 +37,10 @@ import static org.hamcrest.core.Is.is;
  * Assert HTTP API Behaviour.
  */
 public class HttpApiTest
-    extends WervalHttpTest
 {
+    @ClassRule
+    public static WervalHttpRule WERVAL = new WervalHttpRule();
+
     @Test
     public void testIndex()
     {
@@ -48,17 +52,32 @@ public class HttpApiTest
     }
 
     @Test
-    public void testNotFound()
+    public void testInvalidHashids()
     {
         expect().
             statusCode( 404 ).
             when().
-            get( "/api/breweries/123" );
+            get( "/api/breweries/whatever" );
 
         expect().
             statusCode( 404 ).
             when().
-            get( "/api/beers/123" );
+            get( "/api/beers/whatever" );
+    }
+
+    @Test
+    public void testNotFound()
+    {
+        String hashid = WERVAL.application().crypto().hashids().encodeToString( 123L );
+        expect().
+            statusCode( 404 ).
+            when().
+            get( "/api/breweries/" + hashid );
+
+        expect().
+            statusCode( 404 ).
+            when().
+            get( "/api/beers/" + hashid );
     }
 
     @Test
@@ -168,7 +187,7 @@ public class HttpApiTest
             when().
             get( breweryUrl );
 
-        long breweryId = response.body().jsonPath().getLong( "id" );
+        String breweryId = response.body().jsonPath().getString( "id" );
 
         // Missing Brewery
         given().
@@ -183,7 +202,7 @@ public class HttpApiTest
         // Missing Name
         given().
             contentType( APPLICATION_JSON ).
-            body( "{ \"brewery_id\": " + breweryId + ",\"abv\": 4.5 }" ).
+            body( "{ \"brewery_id\": \"" + breweryId + "\",\"abv\": 4.5 }" ).
             expect().
             statusCode( 400 ).
             body( containsString( "name" ) ).
@@ -193,7 +212,7 @@ public class HttpApiTest
         // Missing ABV
         given().
             contentType( APPLICATION_JSON ).
-            body( "{ \"brewery_id\": " + breweryId + ", \"name\":\"ZengBeer\" }" ).
+            body( "{ \"brewery_id\": \"" + breweryId + "\", \"name\":\"ZengBeer\" }" ).
             expect().
             statusCode( 400 ).
             body( containsString( "abv" ) ).
@@ -203,7 +222,7 @@ public class HttpApiTest
         // Invalid ABV
         given().
             contentType( APPLICATION_JSON ).
-            body( "{ \"brewery_id\": " + breweryId + ", \"name\":\"ZengBeer\", \"abv\": -1, \"description\":\"\" }" ).
+            body( "{ \"brewery_id\": \"" + breweryId + "\", \"name\":\"ZengBeer\", \"abv\": -1, \"description\":\"\" }" ).
             expect().
             statusCode( 400 ).
             body( containsString( "abv" ) ).
@@ -213,7 +232,7 @@ public class HttpApiTest
         // Invalid ABV
         given().
             contentType( APPLICATION_JSON ).
-            body( "{ \"brewery_id\": " + breweryId + ", \"name\":\"ZengBeer\", \"abv\": 101, \"description\":\"\" }" ).
+            body( "{ \"brewery_id\": \"" + breweryId + "\", \"name\":\"ZengBeer\", \"abv\": 101, \"description\":\"\" }" ).
             expect().
             statusCode( 400 ).
             body( containsString( "abv" ) ).
@@ -223,7 +242,7 @@ public class HttpApiTest
         // Malicious HTML input
         given().
             contentType( APPLICATION_JSON ).
-            body( "{ \"brewery_id\": " + breweryId + ", \"name\":\"Zeng<a>Beer\", \"abv\": 101, \"description\":\"\\uFE64script\\uFE65alert('powned');\\uFE64/script\\uFE65\" }" ).
+            body( "{ \"brewery_id\": \"" + breweryId + "\", \"name\":\"Zeng<a>Beer\", \"abv\": 101, \"description\":\"\\uFE64script\\uFE65alert('powned');\\uFE64/script\\uFE65\" }" ).
             expect().
             statusCode( 400 ).
             body( containsString( "name" ) ).
@@ -235,6 +254,14 @@ public class HttpApiTest
     @Test
     public void testCreateListDeleteBreweries()
     {
+        int breweriesAtStart = (int) expect()
+            .statusCode( 200 )
+            .contentType( APPLICATION_JSON )
+            .when()
+            .get( "/api/breweries" )
+            .as( Page.class )
+            .getTotal();
+
         Response response = given().
             contentType( APPLICATION_JSON ).
             body( "{ \"name\":\"ZengBrewery\", \"url\":\"http://zeng-beers.com/\", \"description\":\"\" }" ).
@@ -255,8 +282,8 @@ public class HttpApiTest
         expect().
             statusCode( 200 ).
             contentType( APPLICATION_JSON ).
-            body( "total", is( 3 ) ).
-            body( "list", hasSize( 3 ) ).
+            body( "total", is( breweriesAtStart + 1 ) ).
+            body( "list", hasSize( breweriesAtStart + 1 ) ).
             body( "list.name", hasItems( "ZengBrewery" ) ).
             when().
             get( "/api/breweries" );
@@ -269,8 +296,8 @@ public class HttpApiTest
         expect().
             statusCode( 200 ).
             contentType( APPLICATION_JSON ).
-            body( "total", is( 2 ) ).
-            body( "list", hasSize( 2 ) ).
+            body( "total", is( breweriesAtStart ) ).
+            body( "list", hasSize( breweriesAtStart ) ).
             when().
             get( "/api/breweries" );
     }
@@ -294,11 +321,11 @@ public class HttpApiTest
             when().
             get( breweryUrl );
 
-        long breweryId = response.body().jsonPath().getLong( "id" );
+        String breweryId = response.body().jsonPath().getString( "id" );
 
         response = given().
             contentType( APPLICATION_JSON ).
-            body( "{ \"brewery_id\": " + breweryId + ", \"name\":\"ZengBeer\", \"abv\": 4.5, \"description\":\"\" }" ).
+            body( "{ \"brewery_id\": \"" + breweryId + "\", \"name\":\"ZengBeer\", \"abv\": 4.5, \"description\":\"\" }" ).
             expect().
             statusCode( 201 ).
             when().
@@ -348,11 +375,11 @@ public class HttpApiTest
             when().
             get( breweryUrl );
 
-        long breweryId = response.body().jsonPath().getLong( "id" );
+        String breweryId = response.body().jsonPath().getString( "id" );
 
         response = given().
             contentType( APPLICATION_JSON ).
-            body( "{ \"brewery_id\": " + breweryId + ", \"name\":\"ZengBeer\", \"abv\": 4.5, \"description\":\"\" }" ).
+            body( "{ \"brewery_id\": \"" + breweryId + "\", \"name\":\"ZengBeer\", \"abv\": 4.5, \"description\":\"\" }" ).
             expect().
             statusCode( 201 ).
             when().

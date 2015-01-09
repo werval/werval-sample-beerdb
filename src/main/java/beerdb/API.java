@@ -27,11 +27,13 @@ import io.werval.filters.AcceptContentTypes;
 import io.werval.filters.XContentTypeOptions;
 import io.werval.modules.jpa.JPA;
 import io.werval.modules.json.JsonPluginException;
+import io.werval.util.Hashid;
 import java.io.IOException;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.validation.ConstraintViolationException;
 
+import static io.werval.api.context.CurrentContext.crypto;
 import static io.werval.api.context.CurrentContext.outcomes;
 import static io.werval.api.context.CurrentContext.plugin;
 import static io.werval.api.context.CurrentContext.request;
@@ -100,7 +102,7 @@ public class API
             em.persist( brewery );
             em.getTransaction().commit();
 
-            String breweryRoute = reverseRoutes().get( API.class, c -> c.brewery( brewery.getId() ) ).httpUrl();
+            String breweryRoute = reverseRoutes().get( API.class, c -> c.brewery( brewery.getHashid() ) ).httpUrl();
             byte[] json = json().toJSON( brewery, Json.BreweryListView.class );
             return outcomes().created()
                 .withHeader( LOCATION, breweryRoute )
@@ -114,11 +116,11 @@ public class API
         }
     }
 
-    public Outcome brewery( Long id )
+    public Outcome brewery( Hashid id )
         throws JsonProcessingException
     {
         EntityManager em = plugin( JPA.class ).em();
-        Brewery brewery = em.find( Brewery.class, id );
+        Brewery brewery = em.find( Brewery.class, id.singleLong() );
         if( brewery == null )
         {
             return notFound( "Brewery" );
@@ -128,7 +130,7 @@ public class API
     }
 
     @AcceptContentTypes( APPLICATION_JSON )
-    public Outcome updateBrewery( Long id )
+    public Outcome updateBrewery( Hashid id )
         throws IOException
     {
         byte[] body = request().body().asBytes();
@@ -136,7 +138,7 @@ public class API
         {
             EntityManager em = plugin( JPA.class ).em();
             em.getTransaction().begin();
-            Brewery brewery = em.find( Brewery.class, id );
+            Brewery brewery = em.find( Brewery.class, id.singleLong() );
             if( brewery == null )
             {
                 return notFound( "Brewery" );
@@ -152,12 +154,12 @@ public class API
         }
     }
 
-    public Outcome deleteBrewery( Long id )
+    public Outcome deleteBrewery( Hashid id )
         throws JsonProcessingException
     {
         EntityManager em = plugin( JPA.class ).em();
         em.getTransaction().begin();
-        Brewery brewery = em.find( Brewery.class, id );
+        Brewery brewery = em.find( Brewery.class, id.singleLong() );
         if( brewery == null )
         {
             return notFound( "Brewery" );
@@ -209,7 +211,7 @@ public class API
         {
             return badRequest( "Missing brewery_id" );
         }
-        Long breweryId = bodyNode.get( "brewery_id" ).longValue();
+        Hashid breweryId = crypto().hashids().decode( bodyNode.get( "brewery_id" ).asText() );
         Beer beer;
         try
         {
@@ -223,7 +225,7 @@ public class API
         {
             EntityManager em = plugin( JPA.class ).em();
             em.getTransaction().begin();
-            Brewery brewery = em.find( Brewery.class, breweryId );
+            Brewery brewery = em.find( Brewery.class, breweryId.singleLong() );
             if( brewery == null )
             {
                 return badRequest( "No brewery found with id " + breweryId );
@@ -232,7 +234,7 @@ public class API
             em.persist( beer );
             em.persist( brewery );
             em.getTransaction().commit();
-            String beerRoute = reverseRoutes().get( API.class, c -> c.beer( beer.getId() ) ).httpUrl();
+            String beerRoute = reverseRoutes().get( API.class, c -> c.beer( beer.getHashid() ) ).httpUrl();
             byte[] json = json().toJSON( beer, Json.BeerListView.class );
             return outcomes().created()
                 .withHeader( LOCATION, beerRoute )
@@ -246,11 +248,11 @@ public class API
         }
     }
 
-    public Outcome beer( Long id )
+    public Outcome beer( Hashid id )
         throws JsonProcessingException
     {
         EntityManager em = plugin( JPA.class ).em();
-        Beer beer = em.find( Beer.class, id );
+        Beer beer = em.find( Beer.class, id.singleLong() );
         if( beer == null )
         {
             return notFound( "Beer" );
@@ -260,7 +262,7 @@ public class API
     }
 
     @AcceptContentTypes( APPLICATION_JSON )
-    public Outcome updateBeer( Long id )
+    public Outcome updateBeer( Hashid id )
         throws IOException
     {
         byte[] body = request().body().asBytes();
@@ -268,7 +270,7 @@ public class API
         {
             EntityManager em = plugin( JPA.class ).em();
             em.getTransaction().begin();
-            Beer beer = em.find( Beer.class, id );
+            Beer beer = em.find( Beer.class, id.singleLong() );
             if( beer == null )
             {
                 return notFound( "Beer" );
@@ -284,12 +286,12 @@ public class API
         }
     }
 
-    public Outcome deleteBeer( Long id )
+    public Outcome deleteBeer( Hashid id )
         throws JsonProcessingException
     {
         EntityManager em = plugin( JPA.class ).em();
         em.getTransaction().begin();
-        Beer beer = em.find( Beer.class, id );
+        Beer beer = em.find( Beer.class, id.singleLong() );
         if( beer == null )
         {
             return notFound( "Beer" );

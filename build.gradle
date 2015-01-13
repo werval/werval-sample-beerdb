@@ -1,5 +1,4 @@
 
-description = "Werval Sample - Beer Database"
 
 //  ______         __ __     __   ______ __               __              
 // |   __ \.--.--.|__|  |.--|  | |   __ \  |.--.--.-----.|__|.-----.-----.
@@ -10,21 +9,18 @@ description = "Werval Sample - Beer Database"
 //
 
 buildscript { 
-    repositories {
-        if( project.hasProperty( 'wervalLocalRepository' ) ) maven { url project.wervalLocalRepository }
-        jcenter()
-    }
-    dependencies {
-        classpath "io.werval:io.werval.gradle:$wervalVersion"
-        classpath 'de.obqo.gradle:gradle-lesscss-plugin:1.0-1.3.3'
-        classpath 'org.asciidoctor:asciidoctor-gradle-plugin:1.5.1'
-    }
+    repositories { jcenter() }
+    dependencies { classpath 'de.obqo.gradle:gradle-lesscss-plugin:1.0-1.3.3' }
 }
-apply plugin: 'idea'
-apply plugin: 'eclipse'
-apply plugin: 'io.werval.application'
+
+plugins {
+    id 'idea'
+    id 'eclipse'
+    id 'io.werval.application' version '0.6.0'
+    id 'org.asciidoctor.convert' version '1.5.2'
+}
+
 apply plugin: 'lesscss'
-apply plugin: 'org.asciidoctor.gradle.asciidoctor'
 
 
 //

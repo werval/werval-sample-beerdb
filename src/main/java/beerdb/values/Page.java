@@ -16,7 +16,9 @@
 package beerdb.values;
 
 import beerdb.Json;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -30,6 +32,14 @@ public class Page<T>
     private final int page;
     private final int pageSize;
     private final List<T> list;
+
+    public Page()
+    {
+        this.total = 0;
+        this.page = 0;
+        this.pageSize = 0;
+        this.list = new ArrayList<>();
+    }
 
     public Page( long total, int page, int pageSize, List<T> list )
     {
@@ -51,6 +61,7 @@ public class Page<T>
         return page;
     }
 
+    @JsonProperty( "page_size" )
     @JsonView( { Json.BreweryListView.class, Json.BeerListView.class } )
     public int getPageSize()
     {

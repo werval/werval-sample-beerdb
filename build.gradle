@@ -16,7 +16,7 @@ buildscript {
 plugins {
     id 'idea'
     id 'eclipse'
-    id 'io.werval.application' version '0.7.3'
+    id 'io.werval.application' version '0.7.4'
     id 'org.asciidoctor.convert' version '1.5.2'
 }
 
@@ -162,7 +162,7 @@ asciidoctor {
         'linkattrs': '',
         'linkcss':'',
         'source-highlighter': 'coderay', 'coderay-css': 'class',
-        'werval-version': wervalVersion
+        'werval-version': '0.7.4'
     ]
     doLast {
         copy {
